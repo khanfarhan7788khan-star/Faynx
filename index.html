@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Wallify – HD Wallpapers</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Free HD & 4K Wallpapers" />
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#00ffd5">
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header class="app-header">
+  <h1>Wallify</h1>
+  <input id="searchInput" type="text" placeholder="Search wallpapers..." />
+  <button id="installBtn" class="install-btn" hidden>⬇ Install App</button>
+</header>
+
+
+
+<nav class="categories">
+  <button data-cat="nature">Nature</button>
+  <button data-cat="cars">Cars</button>
+  <button data-cat="anime">Anime</button>
+  <button data-cat="technology">Tech</button>
+</nav>
+
+<main>
+  <section id="gallery" class="gallery"></section>
+  <p id="loading" class="loading">Loading wallpapers...</p>
+</main>
+
+
+<!-- MODAL -->
+<div id="previewModal" class="modal">
+  <span class="close">✕</span>
+
+  <select id="qualitySelect">
+    <option value="regular">HD</option>
+    <option value="full">Full HD</option>
+    <option value="raw">4K</option>
+  </select>
+
+  <img id="previewImage" />
+  <a id="downloadBtn" href="#" download target="_blank">Download</a>
+</div>
+
+<script src="app.js"></script>
+
+<script>
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("service-worker.js");
+}
+</script>
+
+</body>
+</html>
+<!-- <script>
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("service-worker.js");
+}
+</script> -->
+<div id="sentinel"></div>
