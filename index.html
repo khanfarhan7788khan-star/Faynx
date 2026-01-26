@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Wallify – HD Wallpapers</title>
+  <title>Wallify – Premium Wallpapers</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#00ffd5" />
   <link rel="manifest" href="manifest.json">
@@ -10,26 +10,50 @@
 </head>
 <body>
 
-<header class="app-header">
-  <h1>Wallify</h1>
-  <input id="searchInput" placeholder="Search wallpapers..." />
+<header class="app-header ios-header">
+  <div class="header-content">
+    <h1 class="logo">
+      <span>Wall</span>ify
+    </h1>
+
+    <div class="search-box">
+      <span>🔍</span>
+      <input id="searchInput" placeholder="Search wallpapers…" />
+    </div>
+  </div>
 </header>
 
+
+
 <nav class="categories">
-  <button data-cat="nature">Nature</button>
-  <button data-cat="cars">Cars</button>
-  <button data-cat="anime">Anime</button>
-  <button data-cat="technology">Tech</button>
+  <button data-cat="nature">🌿 Nature</button>
+  <button data-cat="cars">🚗 Cars</button>
+  <button data-cat="anime">🎌 Anime</button>
+  <button data-cat="technology">💻 Tech</button>
+  <button data-cat="space">🌌 Space</button>
+  <button data-cat="gaming">🎮 Gaming</button>
+  <button data-cat="minimal">⚪ Minimal</button>
+  <button data-cat="dark">🌑 Dark</button>
 </nav>
 
 <main>
   <section id="gallery" class="gallery"></section>
-  <p id="loading" class="loading">Loading…</p>
+  <p id="loading" class="loading">Loading wallpapers…</p>
 </main>
 
 <!-- PREVIEW MODAL -->
 <div id="previewModal" class="modal">
   <span class="close">✕</span>
+
+  <div class="modal-actions">
+    <select id="qualitySelect">
+      <option value="regular">HD</option>
+      <option value="full">Full HD</option>
+      <option value="raw">4K</option>
+    </select>
+    <button id="shareBtn">📤 Share</button>
+  </div>
+
   <img id="previewImage" />
   <button id="modalDownload">⬇ Download</button>
 </div>

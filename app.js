@@ -5,6 +5,8 @@ const loading = document.getElementById("loading");
 const modal = document.getElementById("previewModal");
 const previewImage = document.getElementById("previewImage");
 const modalDownload = document.getElementById("modalDownload");
+const shareBtn = document.getElementById("shareBtn");
+const qualitySelect = document.getElementById("qualitySelect");
 const closeBtn = document.querySelector(".close");
 
 let page = 1;
@@ -12,20 +14,12 @@ let query = "wallpaper";
 let isLoading = false;
 let currentPhoto = null;
 
-/* Best image for device */
-function bestQuality(urls) {
-  if (innerWidth >= 1440) return urls.raw;
-  if (innerWidth >= 1024) return urls.full;
-  return urls.regular;
-}
-
-/* Direct download */
-async function downloadImage(photo) {
+/* Download */
+async function downloadImage(photo, quality) {
   await fetch(photo.links.download_location, {
     headers: { Authorization: `Client-ID ${ACCESS_KEY}` }
   });
-
-  const res = await fetch(photo.urls.full);
+  const res = await fetch(photo.urls[quality]);
   const blob = await res.blob();
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
@@ -33,17 +27,37 @@ async function downloadImage(photo) {
   a.click();
 }
 
+/* Share */
+shareBtn.onclick = () => {
+  if (navigator.share && currentPhoto) {
+    navigator.share({
+      title: "Wallify Wallpaper",
+      text: "Check out this wallpaper!",
+      url: currentPhoto.links.html
+    });
+  } else {
+    alert("Sharing not supported on this device");
+  }
+};
+
 /* Preview */
 function openPreview(photo) {
   currentPhoto = photo;
-  previewImage.src = photo.urls.regular;
+  previewImage.src = photo.urls[qualitySelect.value];
   modal.style.display = "flex";
 }
 
-closeBtn.onclick = () => modal.style.display = "none";
-modalDownload.onclick = () => downloadImage(currentPhoto);
+qualitySelect.onchange = () => {
+  if (currentPhoto)
+    previewImage.src = currentPhoto.urls[qualitySelect.value];
+};
 
-/* Load wallpapers */
+modalDownload.onclick = () =>
+  downloadImage(currentPhoto, qualitySelect.value);
+
+closeBtn.onclick = () => modal.style.display = "none";
+
+/* Load Wallpapers */
 async function loadWallpapers() {
   if (isLoading) return;
   isLoading = true;
@@ -61,13 +75,13 @@ async function loadWallpapers() {
     card.className = "card";
 
     const img = document.createElement("img");
-    img.src = bestQuality(photo.urls);
+    img.src = photo.urls.regular;
     img.onclick = () => openPreview(photo);
 
     const btn = document.createElement("button");
     btn.className = "card-download";
     btn.textContent = "⬇";
-    btn.onclick = () => downloadImage(photo);
+    btn.onclick = () => downloadImage(photo, qualitySelect.value);
 
     card.append(img, btn);
     gallery.appendChild(card);
@@ -78,7 +92,7 @@ async function loadWallpapers() {
   isLoading = false;
 }
 
-/* Infinite scroll */
+/* Infinite Scroll */
 window.addEventListener("scroll", () => {
   if (innerHeight + scrollY >= document.body.offsetHeight - 400) {
     loadWallpapers();
@@ -107,3 +121,4 @@ document.querySelectorAll(".categories button").forEach(btn => {
 
 /* Init */
 loadWallpapers();
+
