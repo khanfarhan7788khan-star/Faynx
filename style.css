@@ -2,11 +2,11 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: system-ui, Arial, sans-serif;
+  font-family: system-ui, -apple-system, sans-serif;
 }
 
 body {
-  background: #000;
+  background: radial-gradient(circle at top, #0f2027, #000);
   color: white;
 }
 
@@ -14,11 +14,11 @@ body {
 .app-header {
   position: sticky;
   top: 0;
-  background: rgba(0,0,0,0.8);
-  backdrop-filter: blur(10px);
-  padding: 15px;
+  backdrop-filter: blur(14px);
+  background: rgba(0,0,0,0.6);
+  padding: 16px;
   text-align: center;
-  z-index: 50;
+  z-index: 100;
 }
 
 .app-header h1 {
@@ -28,91 +28,104 @@ body {
 
 .app-header input {
   width: 90%;
-  max-width: 400px;
-  padding: 12px;
-  border-radius: 12px;
+  max-width: 420px;
+  padding: 14px;
+  border-radius: 16px;
   border: none;
+  outline: none;
 }
 
 /* Categories */
 .categories {
   display: flex;
   gap: 10px;
-  padding: 10px;
+  padding: 12px;
   overflow-x: auto;
 }
 
 .categories button {
-  padding: 8px 16px;
-  border-radius: 20px;
+  padding: 8px 18px;
+  border-radius: 999px;
   border: none;
-  background: #00ffd5;
+  background: linear-gradient(135deg, #00ffd5, #00bfa6);
   font-weight: bold;
+  cursor: pointer;
 }
 
-/* Gallery */
+/* Masonry Gallery */
 .gallery {
   column-count: 2;
-  column-gap: 12px;
-  padding: 12px;
+  column-gap: 14px;
+  padding: 14px;
 }
 
 @media (min-width: 768px) {
-  .gallery {
-    column-count: 3;
-  }
+  .gallery { column-count: 3; }
+}
+
+@media (min-width: 1200px) {
+  .gallery { column-count: 4; }
 }
 
 .card {
   break-inside: avoid;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
   position: relative;
+  border-radius: 16px;
+  overflow: hidden;
 }
 
-
-/* Loading */
-.loading {
-  text-align: center;
-  padding: 20px;
+.card img {
+  width: 100%;
+  display: block;
+  transition: transform 0.4s ease;
+  cursor: pointer;
 }
 
-/* Bottom Nav */
-.bottom-nav {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 60px;
-  background: rgba(0,0,0,0.9);
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  z-index: 40;
+.card:hover img {
+  transform: scale(1.05);
 }
 
-.bottom-nav button {
-  background: none;
-  border: none;
-  font-size: 22px;
+/* Download Button */
+.card-download {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(0,0,0,0.75);
   color: #00ffd5;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
 }
 
-/* MODAL */
+/* Modal */
 .modal {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.95);
-  z-index: 9999; /* IMPORTANT */
-  justify-content: center;
+  background: rgba(0,0,0,0.92);
+  z-index: 9999;
   align-items: center;
+  justify-content: center;
   flex-direction: column;
 }
 
 .modal img {
   max-width: 90%;
-  max-height: 75%;
-  border-radius: 12px;
+  max-height: 70vh;
+  border-radius: 16px;
+  margin-bottom: 20px;
+}
+
+#modalDownload {
+  padding: 14px 28px;
+  background: #00ffd5;
+  border: none;
+  border-radius: 14px;
+  font-weight: bold;
+  cursor: pointer;
 }
 
 .close {
@@ -123,86 +136,8 @@ body {
   cursor: pointer;
 }
 
-#qualitySelect {
-  margin-bottom: 10px;
-  padding: 8px;
-}
-
-/* DOWNLOAD BUTTON — FIXED */
-#downloadBtn {
-  margin-top: 15px;
-  padding: 12px 22px;
-  background: #00ffd5;
-  color: #000;
-  font-weight: bold;
-  border-radius: 10px;
-  text-decoration: none;
-  display: inline-block;
-  z-index: 10000;
-}
-.install-btn {
-  margin-top: 10px;
-  padding: 10px 18px;
-  background: linear-gradient(135deg, #00ffd5, #00bfa6);
-  color: #000;
-  border: none;
-  border-radius: 20px;
-  font-weight: bold;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-.install-btn:hover {
-  opacity: 0.9;
-}
-.install-btn {
-  margin-top: 12px;
-  padding: 12px 22px;
-  background: linear-gradient(135deg, #00ffd5, #00bfa6);
-  color: #000;
-  border: none;
-  border-radius: 24px;
-  font-weight: bold;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-.install-btn:active {
-  transform: scale(0.97);
-}
-.card {
-  position: relative;
-}
-
-.card-download {
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
-  background: rgba(0,0,0,0.75);
-  color: #00ffd5;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  text-decoration: none;
-  font-weight: bold;
-}
-
-.card-download:hover {
-  background: #00ffd5;
-  color: #000;
-}
-.like-btn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: rgba(0,0,0,0.7);
-  color: white;
-  border: none;
-  border-radius: 50%;
-  padding: 8px;
-  cursor: pointer;
-}
-
-.liked {
-  color: red;
+/* Loading */
+.loading {
+  text-align: center;
+  padding: 20px;
 }
