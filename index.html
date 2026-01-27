@@ -2,18 +2,25 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Wallify – Premium Wallpapers</title>
+  <title>Faynx  – Premium Wallpapers</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#00ffd5" />
   <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="style.css" />
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+
 </head>
 <body>
+
+   <button id="installAppBtn" style="position: fixed; bottom: 16px; right: px; z-index: 1000; ">
+  ⬇ Download App
+</button>
 
 <header class="app-header ios-header">
   <div class="header-content">
     <h1 class="logo">
-      <span>Wall</span>ify
+      <span>Faynx 
     </h1>
 
     <div class="search-box">
@@ -21,6 +28,8 @@
       <input id="searchInput" placeholder="Search wallpapers…" />
     </div>
   </div>
+ 
+
 </header>
 
 
@@ -61,3 +70,96 @@
 <script src="app.js"></script>
 </body>
 </html>
+<section id="profilePage" class="page hidden">
+  <div class="profile-card">
+    <img src="icons/icon-192.png" class="profile-avatar" />
+    <h2 id="profileName">Guest User</h2>
+    <p id="profileEmail">Not logged in</p>
+
+    <button onclick="openPremium()" class="primary-btn">
+      Go Premium ⭐
+    </button>
+
+    <button onclick="logout()" class="secondary-btn">
+      Logout
+    </button>
+  </div>
+</section>
+<section id="authPage" class="page hidden">
+  <div class="auth-card">
+    <h2>Welcome to Faynx  </h2>
+
+    <input id="authName" placeholder="Your Name" />
+    <input id="authEmail" placeholder="Email" />
+    <input id="authPassword" type="password" placeholder="Password" />
+
+    <button onclick="login()" class="primary-btn">
+      Login / Sign Up
+    </button>
+  </div>
+</section>
+<section id="premiumPage" class="page hidden">
+  <div class="premium-card">
+    <h2>✨ Faynx  Premium</h2>
+    <ul>
+      <li>✔ 4K & AMOLED Wallpapers</li>
+      <li>✔ No Ads</li>
+      <li>✔ Offline Downloads</li>
+      <li>✔ Exclusive Collections</li>
+    </ul>
+
+    <button onclick="buyPremium()" class="primary-btn">
+      Upgrade Now 🚀
+    </button>
+  </div>
+</section>
+<section id="authPage" class="page hidden">
+  <div class="card">
+    <h2>Welcome</h2>
+
+    <input id="emailInput" placeholder="Email">
+    <input id="passwordInput" type="password" placeholder="Password">
+
+    <button onclick="emailLogin()" class="primary-btn">Login / Sign Up</button>
+
+    <div class="divider">OR</div>
+
+    <button onclick="googleLogin()" class="google-btn">
+      Sign in with Google
+    </button>
+  </div>
+</section>
+<section id="profilePage" class="page hidden">
+  <div class="card">
+    <img id="profilePic" class="avatar">
+    <h3 id="profileName"></h3>
+    <p id="profileEmail"></p>
+
+    <button onclick="openEditProfile()" class="primary-btn">Edit Profile</button>
+    <button onclick="openPremium()" class="primary-btn">Go Premium ⭐</button>
+    <button onclick="logout()" class="secondary-btn">Logout</button>
+  </div>
+</section>
+<section id="editProfilePage" class="page hidden">
+  <div class="card">
+    <h3>Edit Profile</h3>
+
+    <input id="editName" placeholder="Display Name">
+
+    <button onclick="saveProfile()" class="primary-btn">Save</button>
+  </div>
+</section>
+<section id="premiumPage" class="page hidden">
+  <div class="card">
+    <h2>Premium</h2>
+    <ul>
+      <li>✔ 4K & AMOLED Wallpapers</li>
+      <li>✔ No Ads</li>
+      <li>✔ Offline Access</li>
+    </ul>
+
+    <button onclick="activatePremium()" class="primary-btn">
+      Subscribe ₹99 / month
+    </button>
+  </div>
+</section>

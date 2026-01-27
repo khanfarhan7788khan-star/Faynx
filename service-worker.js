@@ -1,4 +1,4 @@
-const CACHE = "wallify-v2"; // v1 → v2
+const CACHE = "Faynx -v2"; // v1 → v2
 
 const FILES = [
   "./",
