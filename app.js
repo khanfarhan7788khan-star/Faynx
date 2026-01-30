@@ -199,42 +199,78 @@ function openWallpaperModal(photo) {
 
   modal.innerHTML = `
     <div class="modal-content">
-      <img src="${photo.urls.regular}">
-      <select id="quality">
+      <img id="modalImage" src="${photo.urls.regular}" />
+
+      <select id="qualitySelect">
         <option value="regular">HD</option>
         <option value="full">Full HD</option>
         <option value="raw">4K</option>
       </select>
+
       <button id="downloadBtn">Download</button>
       <button id="shareBtn">Share</button>
-      <button onclick="this.parentElement.parentElement.remove()">Close</button>
+      <button class="close-btn">Close</button>
     </div>
   `;
 
   document.body.appendChild(modal);
 
-  document.getElementById("downloadBtn").onclick = () => {
-    const q = document.getElementById("quality").value;
-    window.open(photo.urls[q], "_blank");
+  const imageEl = document.getElementById("modalImage");
+  const qualitySelect = document.getElementById("qualitySelect");
+
+  qualitySelect.onchange = () => {
+    imageEl.src = photo.urls[qualitySelect.value];
+  };
+
+  document.getElementById("downloadBtn").onclick = async () => {
+    const quality = qualitySelect.value;
+    const imageUrl = photo.urls[quality];
+
+    const a = document.createElement("a");
+    a.href = imageUrl;
+    a.download = "faynx-wallpaper.jpg";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
   };
 
   document.getElementById("shareBtn").onclick = async () => {
     if (navigator.share) {
-      await navigator.share({ url: photo.links.html });
+      navigator.share({
+        title: "Faynx Wallpaper",
+        url: photo.links.html
+      });
     } else {
-      navigator.clipboard.writeText(photo.links.html);
-      alert("Link copied!");
+      await navigator.clipboard.writeText(photo.links.html);
+      alert("Link copied to clipboard");
     }
   };
+
+  modal.querySelector(".close-btn").onclick = () => modal.remove();
 }
+
 
 /*********************************
   INIT
 *********************************/
-loadWallpapers();
-
-window.addEventListener("scroll", () => {
-  if (innerHeight + scrollY >= document.body.offsetHeight - 300) {
-    loadWallpapers();
+img.onclick = () => {
+  if (isPremiumPhoto) {
+    showPremiumComingSoon();
+  } else {
+    openWallpaperModal(photo);
   }
-});
+};
+function showPremiumComingSoon() {
+  const modal = document.createElement("div");
+  modal.className = "wallpaper-modal";
+
+  modal.innerHTML = `
+    <div class="modal-content">
+      <h2>🔒 Premium Wallpapers</h2>
+      <p>Premium wallpapers are coming soon.</p>
+      <button onclick="this.closest('.wallpaper-modal').remove()">Close</button>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+}
