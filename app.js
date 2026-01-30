@@ -39,6 +39,7 @@ const rememberMe = document.getElementById("rememberMe");
 
 const loginBtn = document.getElementById("loginBtn");
 const logoutBtn = document.getElementById("logoutBtn");
+const profileBtn = document.getElementById("profileBtn");
 const profileAvatar = document.getElementById("profileAvatar");
 
 const profilePage = document.getElementById("profilePage");
@@ -78,7 +79,11 @@ document.addEventListener("click", e => {
 /*********************************
   AUTH MODAL
 *********************************/
-window.openAuth = () => authModal.classList.remove("hidden");
+window.openAuth = () => {
+  profileMenu.classList.add("hidden");
+  authModal.classList.remove("hidden");
+};
+
 window.closeAuth = () => authModal.classList.add("hidden");
 
 window.toggleAuthMode = () => {
@@ -95,9 +100,15 @@ window.googleLogin = async () => {
 };
 
 window.handleAuth = async () => {
-  const email = emailInput.value;
-  const password = passwordInput.value;
+  const email = emailInput.value.trim();
+  const password = passwordInput.value.trim();
   const remember = rememberMe.checked;
+
+  if (!email || !password) {
+    authError.textContent = "Email and password required";
+    authError.classList.remove("hidden");
+    return;
+  }
 
   authError.classList.add("hidden");
   authLoader.classList.remove("hidden");
@@ -123,36 +134,47 @@ window.handleAuth = async () => {
 
 window.logout = async () => {
   await signOut(auth);
+  profileMenu.classList.add("hidden");
 };
 
 /*********************************
-  AUTH STATE (ONLY ONE!)
+  PROFILE PAGE CONTROLS
+*********************************/
+window.openProfilePage = () => {
+  profileMenu.classList.add("hidden");
+  profilePage.classList.remove("hidden");
+};
+
+window.closeProfilePage = () => {
+  profilePage.classList.add("hidden");
+};
+
+/*********************************
+  AUTH STATE (SINGLE SOURCE OF TRUTH)
 *********************************/
 onAuthStateChanged(auth, user => {
   if (user) {
-    // Top-right profile button avatar
-    profileAvatar.src =
-      user.photoURL || "https://i.pravatar.cc/150";
+    profileAvatar.src = user.photoURL || DEFAULT_AVATAR;
 
-    // Profile page
-    profilePageAvatar.src =
-      user.photoURL || "https://i.pravatar.cc/150";
-    profilePageName.textContent =
-      user.displayName || "User";
+    profilePageAvatar.src = user.photoURL || DEFAULT_AVATAR;
+    profilePageName.textContent = user.displayName || "User";
     profilePageEmail.textContent = user.email;
 
     loginBtn.classList.add("hidden");
+    profileBtn.classList.remove("hidden");
     logoutBtn.classList.remove("hidden");
-    profilePage.classList.remove("hidden");
   } else {
-    profileAvatar.src = "https://i.pravatar.cc/150";
+    profileAvatar.src = DEFAULT_AVATAR;
 
     loginBtn.classList.remove("hidden");
+    profileBtn.classList.add("hidden");
     logoutBtn.classList.add("hidden");
+
     profilePage.classList.add("hidden");
   }
-});
 
+  authModal.classList.add("hidden");
+});
 
 /*********************************
   UNSPLASH
@@ -182,7 +204,7 @@ async function loadWallpapers(reset = false) {
     card.className = "card";
 
     const img = document.createElement("img");
-    img.src = photo.urls.regular;
+    img.src = photo.urls.small;
 
     const isPremium = Math.random() < 0.3;
     img.onclick = () =>
@@ -227,6 +249,7 @@ function openWallpaperModal(photo) {
 function showPremiumComingSoon() {
   const modal = document.createElement("div");
   modal.className = "wallpaper-modal";
+
   modal.innerHTML = `
     <div class="modal-content">
       <h2>🔒 Premium Wallpapers</h2>
@@ -234,6 +257,7 @@ function showPremiumComingSoon() {
       <button class="back-btn">Close</button>
     </div>
   `;
+
   document.body.appendChild(modal);
   modal.querySelector(".back-btn").onclick = () => modal.remove();
 }

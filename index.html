@@ -7,7 +7,55 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 
-<!-- AUTH MODAL -->
+<body>
+
+<!-- ================= HEADER (TOP ONLY) ================= -->
+<header class="ios-header">
+  <div class="header-content">
+
+    <!-- LEFT: APP NAME -->
+    <div class="app-title">
+      Fay<span>nx</span>
+    </div>
+
+    <!-- CENTER: SEARCH -->
+    <div class="header-search">
+      <input
+        type="text"
+        id="searchInput"
+        placeholder="Search wallpapers..."
+      />
+    </div>
+
+    <!-- RIGHT: PROFILE -->
+    <div class="profile-wrapper">
+      <button class="profile-btn" onclick="toggleProfileMenu()">
+        <img
+          id="profileAvatar"
+          src="https://i.pravatar.cc/150"
+          alt="Profile"
+        />
+      </button>
+
+      <!-- PROFILE DROPDOWN -->
+      <div id="profileMenu" class="profile-menu hidden">
+        <!-- Shown when logged OUT -->
+        <button id="loginBtn" onclick="openAuth()">Login / Sign up</button>
+
+        <!-- Shown when logged IN -->
+        <button id="profileBtn" class="hidden" onclick="openProfilePage()">
+          Profile Settings
+        </button>
+        <button id="logoutBtn" class="hidden" onclick="logout()">
+          Logout
+        </button>
+      </div>
+    </div>
+
+  </div>
+</header>
+
+<!-- ================= AUTH MODAL (HIDDEN BY DEFAULT) ================= -->
 <div id="authModal" class="auth-modal hidden">
   <div class="auth-box">
 
@@ -24,7 +72,6 @@
     <p id="authError" class="auth-error hidden"></p>
 
     <button id="authSubmitBtn" onclick="handleAuth()">Login</button>
-
     <button onclick="googleLogin()">Continue with Google</button>
 
     <p class="auth-toggle">
@@ -39,100 +86,15 @@
   </div>
 </div>
 
+<!-- ================= PROFILE PAGE (HIDDEN BY DEFAULT) ================= -->
+<section id="profilePage" class="profile-page hidden">
+  <img id="profilePageAvatar" src="https://i.pravatar.cc/150" />
+  <h3 id="profilePageName">User</h3>
+  <p id="profilePageEmail">email@example.com</p>
 
-<body>
-
-  <section id="profilePage" class="profile-page hidden">
-  <img id="profilePageAvatar" src="" />
-  <h3 id="profilePageName"></h3>
-  <p id="profilePageEmail"></p>
-  <button onclick="logout()">Logout</button>
-</section>
-
-
-<!-- ================= HEADER ================= -->
-<header class="ios-header">
-  <div class="header-content">
-
-    <!-- LEFT -->
-    <div class="app-title">
-      Fay<span>nx</span>
-    </div>
-
-    <!-- CENTER SEARCH -->
-    <div class="header-search">
-      <input 
-        type="text" 
-        id="searchInput" 
-        placeholder="Search wallpapers..."
-      />
-    </div>
-
-    <!-- RIGHT PROFILE -->
- <div class="profile-wrapper">
-  <button class="profile-btn" onclick="toggleProfileMenu()">
-    <img
-      id="profileAvatar"
-      src="https://i.pravatar.cc/150"
-      alt="Profile"
-    />
+  <button class="secondary-btn" onclick="closeProfilePage()">
+    Back
   </button>
-
-  <div id="profileMenu" class="profile-menu hidden">
-    <button id="loginBtn" onclick="openAuth()">Login</button>
-    <button id="logoutBtn" class="hidden" onclick="logout()">Logout</button>
-  </div>
-</div>
-
-
-<!-- ================= AUTH PAGE ================= -->
-<section id="authPage" class="page auth-page hidden">
-  <div class="auth-card">
-    <h2 id="authTitle">Welcome to Faynx</h2>
-    <p id="authSubtitle">Sign in to continue</p>
-
-    <input id="emailInput" type="email" placeholder="Email" />
-    <input id="passwordInput" type="password" placeholder="Password" />
-
-    <button class="primary-btn" onclick="emailLogin()">Login</button>
-    <button class="secondary-btn" onclick="googleLogin()">Continue with Google</button>
-
-    <p class="auth-toggle">
-      Don’t have an account?
-      <span onclick="toggleAuthMode()">Sign up</span>
-    </p>
-
-    <button class="secondary-btn" onclick="continueAsGuest()">
-      Continue as Guest
-    </button>
-  </div>
-</section>
-
-<!-- ================= PROFILE SETTINGS ================= -->
-<section id="profileSettings" class="page hidden">
-  <div class="profile-card">
-
-    <img 
-      id="settingsAvatar" 
-      class="profile-avatar" 
-      src="https://i.pravatar.cc/150"
-    />
-
-    <h3 id="settingsName">Guest</h3>
-    <p id="settingsEmail">Not logged in</p>
-
-    <p class="profile-status">
-      Plan: <strong id="settingsPlan">Free</strong>
-    </p>
-
-    <button class="primary-btn" onclick="openAuth()">
-      Login / Sign up
-    </button>
-
-    <button class="secondary-btn" onclick="logout()">
-      Logout
-    </button>
-  </div>
 </section>
 
 <!-- ================= GALLERY ================= -->
