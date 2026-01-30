@@ -27,18 +27,18 @@
     </div>
 
     <!-- RIGHT PROFILE -->
-    <div class="profile-wrapper">
-      <button class="profile-btn" onclick="toggleProfileMenu()">
-        👤
-      </button>
+  <div class="profile-wrapper">
+  <button class="profile-btn" onclick="toggleProfileMenu()">
+    <img id="profileAvatar" src="https://i.pravatar.cc/100" alt="profile" />
+  </button>
 
-      <!-- DROPDOWN -->
-      <div id="profileMenu" class="profile-menu hidden">
-        <button onclick="openAuth()">Login / Sign up</button>
-        <button onclick="openProfileSettings()">Profile Settings</button>
-        <button onclick="logout()">Logout</button>
-      </div>
-    </div>
+  <div id="profileMenu" class="profile-menu hidden">
+    <button id="loginBtn" onclick="openAuth()">Login</button>
+    <button id="logoutBtn" class="hidden" onclick="logout()">Logout</button>
+  </div>
+</div>
+
+
 
   </div>
 </header>
