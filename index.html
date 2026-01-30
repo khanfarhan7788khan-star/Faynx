@@ -6,7 +6,49 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="style.css" />
 </head>
+
+<!-- AUTH MODAL -->
+<div id="authModal" class="auth-modal hidden">
+  <div class="auth-box">
+
+    <h2 id="authModeTitle">Login</h2>
+
+    <input id="emailInput" type="email" placeholder="Email" />
+    <input id="passwordInput" type="password" placeholder="Password" />
+
+    <label class="remember">
+      <input type="checkbox" id="rememberMe" />
+      Remember me
+    </label>
+
+    <p id="authError" class="auth-error hidden"></p>
+
+    <button id="authSubmitBtn" onclick="handleAuth()">Login</button>
+
+    <button onclick="googleLogin()">Continue with Google</button>
+
+    <p class="auth-toggle">
+      Don’t have an account?
+      <span onclick="toggleAuthMode()">Sign up</span>
+    </p>
+
+    <div id="authLoader" class="loader hidden"></div>
+
+    <button class="close-btn" onclick="closeAuth()">Close</button>
+
+  </div>
+</div>
+
+
 <body>
+
+  <section id="profilePage" class="profile-page hidden">
+  <img id="profilePageAvatar" src="" />
+  <h3 id="profilePageName"></h3>
+  <p id="profilePageEmail"></p>
+  <button onclick="logout()">Logout</button>
+</section>
+
 
 <!-- ================= HEADER ================= -->
 <header class="ios-header">

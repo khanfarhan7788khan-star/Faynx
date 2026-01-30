@@ -424,3 +424,91 @@ body {
   border-radius: 50%;
   object-fit: cover;
 }
+.auth-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+}
+
+.auth-box {
+  width: 90%;
+  max-width: 360px;
+  background: rgba(255,255,255,0.1);
+  padding: 20px;
+  border-radius: 20px;
+  text-align: center;
+}
+
+.auth-box input,
+.auth-box button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
+  border-radius: 999px;
+  border: none;
+}
+
+.close-btn {
+  background: rgba(255,255,255,0.2);
+  color: white;
+}
+
+.hidden {
+  display: none;
+}
+/* AUTH */
+.auth-error {
+  color: #ff6b6b;
+  font-size: 13px;
+  margin-top: 8px;
+}
+
+.auth-toggle span {
+  color: #00ffd5;
+  cursor: pointer;
+}
+
+.remember {
+  font-size: 13px;
+  opacity: 0.8;
+  margin-top: 10px;
+  display: block;
+  text-align: left;
+}
+
+/* LOADER */
+.loader {
+  width: 32px;
+  height: 32px;
+  border: 3px solid rgba(255,255,255,0.3);
+  border-top: 3px solid #00ffd5;
+  border-radius: 50%;
+  margin: 14px auto;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* PROFILE PAGE */
+.profile-page {
+  max-width: 380px;
+  margin: 120px auto;
+  padding: 24px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 22px;
+  text-align: center;
+}
+
+.profile-page img {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  margin-bottom: 12px;
+}
