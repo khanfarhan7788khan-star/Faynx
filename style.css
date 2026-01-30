@@ -512,3 +512,90 @@ body {
   border-radius: 50%;
   margin-bottom: 12px;
 }
+.modal-content select,
+.modal-content button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
+  border-radius: 999px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+}
+/* =========================
+   FLOATING APP DOWNLOAD BUTTON
+========================= */
+
+/* =========================
+   UPGRADED APP DOWNLOAD BUTTON (PILL)
+========================= */
+
+.app-download-float {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 99999;
+
+  padding: 14px 22px;
+  border-radius: 999px; /* pill shape */
+
+  border: none;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+
+  color: #000;
+  background: linear-gradient(135deg, #00ffd5, #00bfa6);
+
+  box-shadow:
+    0 0 18px rgba(0,255,213,0.9),
+    0 0 36px rgba(0,255,213,0.6),
+    0 0 60px rgba(0,255,213,0.4);
+
+  animation: glowPulse 2.2s infinite;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Hover / Tap feedback */
+.app-download-float:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow:
+    0 0 24px rgba(0,255,213,1),
+    0 0 48px rgba(0,255,213,0.8),
+    0 0 72px rgba(0,255,213,0.6);
+}
+
+/* Glow animation */
+@keyframes glowPulse {
+  0% {
+    box-shadow:
+      0 0 14px rgba(0,255,213,0.8),
+      0 0 28px rgba(0,255,213,0.5);
+  }
+  50% {
+    box-shadow:
+      0 0 26px rgba(0,255,213,1),
+      0 0 52px rgba(0,255,213,0.8);
+  }
+  100% {
+    box-shadow:
+      0 0 14px rgba(0,255,213,0.8),
+      0 0 28px rgba(0,255,213,0.5);
+  }
+}
+
+/* MOBILE OPTIMIZATION */
+@media (max-width: 768px) {
+  .app-download-float {
+    padding: 12px 18px;
+    font-size: 14px;
+    bottom: 16px;
+    right: 16px;
+  }
+}

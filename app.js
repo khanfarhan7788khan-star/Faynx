@@ -236,15 +236,73 @@ function openWallpaperModal(photo) {
 
   modal.innerHTML = `
     <div class="modal-content">
+
       <button class="back-btn">← Back</button>
-      <img src="${photo.urls.regular}">
-      <button onclick="window.open('${photo.urls.full}','_blank')">Download</button>
+
+      <img id="modalImage" src="${photo.urls.regular}" />
+
+      <!-- QUALITY SELECT -->
+      <select id="qualitySelect">
+        <option value="regular">HD</option>
+        <option value="full">Full HD</option>
+        <option value="raw">4K</option>
+      </select>
+
+      <!-- DOWNLOAD -->
+      <button id="downloadBtn">Download Wallpaper</button>
+
+      <!-- SHARE -->
+      <button id="shareBtn">Share</button>
+
+      <!-- APP DOWNLOAD -->
+      <button id="appDownloadBtn">Download App</button>
+
     </div>
   `;
 
   document.body.appendChild(modal);
+
+  const imageEl = modal.querySelector("#modalImage");
+  const qualitySelect = modal.querySelector("#qualitySelect");
+
+  /* QUALITY CHANGE */
+  qualitySelect.onchange = () => {
+    imageEl.src = photo.urls[qualitySelect.value];
+  };
+
+  /* WALLPAPER DOWNLOAD */
+  modal.querySelector("#downloadBtn").onclick = () => {
+    const quality = qualitySelect.value;
+    const link = document.createElement("a");
+    link.href = photo.urls[quality];
+    link.download = "faynx-wallpaper.jpg";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  };
+
+  /* SHARE */
+  modal.querySelector("#shareBtn").onclick = async () => {
+    if (navigator.share) {
+      navigator.share({
+        title: "Faynx Wallpaper",
+        url: photo.links.html
+      });
+    } else {
+      await navigator.clipboard.writeText(photo.links.html);
+      alert("Wallpaper link copied");
+    }
+  };
+
+  /* APP DOWNLOAD (CHANGE LINK LATER) */
+  modal.querySelector("#appDownloadBtn").onclick = () => {
+    window.open("https://your-app-link-here.com", "_blank");
+  };
+
+  /* CLOSE */
   modal.querySelector(".back-btn").onclick = () => modal.remove();
 }
+
 
 function showPremiumComingSoon() {
   const modal = document.createElement("div");
@@ -277,3 +335,17 @@ window.addEventListener("scroll", () => {
 });
 
 loadWallpapers();
+/*********************************
+  APP DOWNLOAD BUTTON
+*********************************/
+const appDownloadBtn = document.getElementById("appDownloadFloat");
+
+if (appDownloadBtn) {
+  appDownloadBtn.onclick = () => {
+    // CHANGE THIS LINK WHEN YOUR APP IS READY
+    window.open(
+      "https://your-app-download-link.com",
+      "_blank"
+    );
+  };
+}
