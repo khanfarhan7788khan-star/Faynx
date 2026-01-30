@@ -130,26 +130,29 @@ window.logout = async () => {
 *********************************/
 onAuthStateChanged(auth, user => {
   if (user) {
-    authModal.classList.add("hidden");
+    // Top-right profile button avatar
+    profileAvatar.src =
+      user.photoURL || "https://i.pravatar.cc/150";
+
+    // Profile page
+    profilePageAvatar.src =
+      user.photoURL || "https://i.pravatar.cc/150";
+    profilePageName.textContent =
+      user.displayName || "User";
+    profilePageEmail.textContent = user.email;
 
     loginBtn.classList.add("hidden");
     logoutBtn.classList.remove("hidden");
-
-    profileAvatar.src = user.photoURL || DEFAULT_AVATAR;
-
-    profilePageAvatar.src = user.photoURL || DEFAULT_AVATAR;
-    profilePageName.textContent = user.displayName || "User";
-    profilePageEmail.textContent = user.email;
-
     profilePage.classList.remove("hidden");
   } else {
+    profileAvatar.src = "https://i.pravatar.cc/150";
+
     loginBtn.classList.remove("hidden");
     logoutBtn.classList.add("hidden");
-
-    profileAvatar.src = DEFAULT_AVATAR;
     profilePage.classList.add("hidden");
   }
 });
+
 
 /*********************************
   UNSPLASH
