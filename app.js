@@ -1,3 +1,68 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyDWcWf_vcl_OLRM1Lj-Heh20k2zJqmGLok",
+  authDomain: "faynx0.firebaseapp.com",
+  projectId: "faynx0",
+};
+
+const firebaseApp = initializeApp(firebaseConfig);
+const auth = getAuth(firebaseApp);
+
+// Google Login
+window.googleLogin = async () => {
+  try {
+    const provider = new GoogleAuthProvider();
+    await signInWithPopup(auth, provider);
+    alert("Logged in successfully");
+  } catch (e) {
+    alert(e.message);
+  }
+};
+
+// Email Login
+window.emailLogin = async (email, password) => {
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+    alert("Logged in");
+  } catch (e) {
+    alert(e.message);
+  }
+};
+
+// Signup
+window.emailSignup = async (email, password) => {
+  try {
+    await createUserWithEmailAndPassword(auth, email, password);
+    alert("Account created");
+  } catch (e) {
+    alert(e.message);
+  }
+};
+
+// Logout
+window.logout = async () => {
+  await signOut(auth);
+  alert("Logged out");
+};
+
+onAuthStateChanged(auth, user => {
+  if (user) {
+    console.log("User logged in:", user.email);
+  } else {
+    console.log("User logged out");
+  }
+});
+
 /*********************************
   UNSPLASH CONFIG
 *********************************/
@@ -94,6 +159,9 @@ function openWallpaperModal(photo) {
 
   modal.innerHTML = `
     <div class="modal-content">
+
+      <button class="back-btn">← Back</button>
+
       <img id="modalImage" src="${photo.urls.regular}" />
 
       <select id="qualitySelect">
@@ -104,7 +172,7 @@ function openWallpaperModal(photo) {
 
       <button id="downloadBtn">Download</button>
       <button id="shareBtn">Share</button>
-      <button class="close-btn">Close</button>
+
     </div>
   `;
 
@@ -118,13 +186,12 @@ function openWallpaperModal(photo) {
   };
 
   modal.querySelector("#downloadBtn").onclick = () => {
-    const quality = qualitySelect.value;
-    const link = document.createElement("a");
-    link.href = photo.urls[quality];
-    link.download = "faynx-wallpaper.jpg";
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
+    const a = document.createElement("a");
+    a.href = photo.urls[qualitySelect.value];
+    a.download = "faynx-wallpaper.jpg";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
   };
 
   modal.querySelector("#shareBtn").onclick = async () => {
@@ -135,12 +202,14 @@ function openWallpaperModal(photo) {
       });
     } else {
       await navigator.clipboard.writeText(photo.links.html);
-      alert("Link copied to clipboard");
+      alert("Link copied");
     }
   };
 
-  modal.querySelector(".close-btn").onclick = () => modal.remove();
+  /* ✅ BACK BUTTON */
+  modal.querySelector(".back-btn").onclick = () => modal.remove();
 }
+
 
 /*********************************
   PREMIUM COMING SOON MODAL
