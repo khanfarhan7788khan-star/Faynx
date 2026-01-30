@@ -1,70 +1,159 @@
+/*********************************
+  UNSPLASH CONFIG
+*********************************/
 const ACCESS_KEY = "Gj2IdthS_6q_yLZ6TOyADqyF1WgJ7hvu99u7Jhm73gs";
 
+/*********************************
+  FIREBASE
+*********************************/
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
+  onAuthStateChanged,
+  signOut,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  setDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+/*********************************
+  FIREBASE CONFIG
+*********************************/
+const firebaseConfig = {
+  apiKey: "AIzaSyDWcWf_vcl_OLRM1Lj-Heh20k2zJqmGLok",
+  authDomain: "faynx0.firebaseapp.com",
+  projectId: "faynx0"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+/*********************************
+  DOM
+*********************************/
 const gallery = document.getElementById("gallery");
 const loading = document.getElementById("loading");
-const modal = document.getElementById("previewModal");
-const previewImage = document.getElementById("previewImage");
-const modalDownload = document.getElementById("modalDownload");
-const shareBtn = document.getElementById("shareBtn");
-const qualitySelect = document.getElementById("qualitySelect");
-const closeBtn = document.querySelector(".close");
 
+const authPage = document.getElementById("authPage");
+const profileMenu = document.getElementById("profileMenu");
+
+const settingsName = document.getElementById("settingsName");
+const settingsEmail = document.getElementById("settingsEmail");
+const settingsPlan = document.getElementById("settingsPlan");
+
+/*********************************
+  STATE
+*********************************/
 let page = 1;
-let query = "wallpaper";
 let isLoading = false;
-let currentPhoto = null;
+let IS_PREMIUM = false;
+let isSignupMode = false;
 
-/* Download */
-async function downloadImage(photo, quality) {
-  await fetch(photo.links.download_location, {
-    headers: { Authorization: `Client-ID ${ACCESS_KEY}` }
-  });
-  const res = await fetch(photo.urls[quality]);
-  const blob = await res.blob();
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = `faynx-${photo.id}.jpg`;
-  a.click();
-}
+/*********************************
+  PROFILE MENU
+*********************************/
+window.toggleProfileMenu = () => {
+  profileMenu.classList.toggle("hidden");
+};
 
-/* Share */
-shareBtn.onclick = () => {
-  if (navigator.share && currentPhoto) {
-    navigator.share({
-      title: "Faynx  Wallpaper",
-      text: "Check out this wallpaper!",
-      url: currentPhoto.links.html
-    });
-  } else {
-    alert("Sharing not supported on this device");
+window.openAuth = () => {
+  profileMenu.classList.add("hidden");
+  authPage.classList.remove("hidden");
+};
+
+window.openProfileSettings = () => {
+  profileMenu.classList.add("hidden");
+  document.getElementById("profileSettings").classList.remove("hidden");
+};
+
+/*********************************
+  AUTH
+*********************************/
+window.googleLogin = async () => {
+  await signInWithPopup(auth, new GoogleAuthProvider());
+};
+
+window.logout = async () => {
+  await signOut(auth);
+  location.reload();
+};
+
+window.toggleAuthMode = () => {
+  isSignupMode = !isSignupMode;
+  document.getElementById("authTitle").textContent =
+    isSignupMode ? "Create account" : "Welcome back";
+  document.getElementById("authSubtitle").textContent =
+    isSignupMode ? "Sign up to continue" : "Sign in to continue";
+};
+
+window.emailLogin = async () => {
+  const email = emailInput.value;
+  const pass = passwordInput.value;
+
+  try {
+    if (isSignupMode) {
+      await createUserWithEmailAndPassword(auth, email, pass);
+    } else {
+      await signInWithEmailAndPassword(auth, email, pass);
+    }
+  } catch (e) {
+    alert(e.message);
   }
 };
 
-/* Preview */
-function openPreview(photo) {
-  currentPhoto = photo;
-  previewImage.src = photo.urls[qualitySelect.value];
-  modal.style.display = "flex";
-}
+/*********************************
+  AUTH STATE
+*********************************/
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    IS_PREMIUM = false;
+    settingsName.textContent = "Guest";
+    settingsEmail.textContent = "Not logged in";
+    settingsPlan.textContent = "Free";
+    return;
+  }
 
-qualitySelect.onchange = () => {
-  if (currentPhoto)
-    previewImage.src = currentPhoto.urls[qualitySelect.value];
-};
+  authPage.classList.add("hidden");
 
-modalDownload.onclick = () =>
-  downloadImage(currentPhoto, qualitySelect.value);
+  settingsName.textContent = user.displayName || "User";
+  settingsEmail.textContent = user.email || "";
+  
+  const ref = doc(db, "users", user.uid);
+  const snap = await getDoc(ref);
 
-closeBtn.onclick = () => modal.style.display = "none";
+  if (!snap.exists()) {
+    await setDoc(ref, {
+      premium: false,
+      createdAt: serverTimestamp()
+    });
+    IS_PREMIUM = false;
+  } else {
+    IS_PREMIUM = snap.data().premium === true;
+  }
 
-/* Load Wallpapers */
+  settingsPlan.textContent = IS_PREMIUM ? "Premium" : "Free";
+});
+
+/*********************************
+  WALLPAPERS
+*********************************/
 async function loadWallpapers() {
   if (isLoading) return;
   isLoading = true;
   loading.style.display = "block";
 
   const res = await fetch(
-    `https://api.unsplash.com/search/photos?query=${query}&page=${page}&per_page=12`,
+    `https://api.unsplash.com/search/photos?query=wallpaper&page=${page}&per_page=12`,
     { headers: { Authorization: `Client-ID ${ACCESS_KEY}` } }
   );
 
@@ -76,248 +165,76 @@ async function loadWallpapers() {
 
     const img = document.createElement("img");
     img.src = photo.urls.regular;
-    img.onclick = () => openPreview(photo);
 
-    const btn = document.createElement("button");
-    btn.className = "card-download";
-    btn.textContent = "⬇";
-    btn.onclick = () => downloadImage(photo, qualitySelect.value);
+    const isPremiumPhoto = Math.random() < 0.3;
 
-    card.append(img, btn);
+    img.onclick = () => {
+      if (isPremiumPhoto && !IS_PREMIUM) {
+        openAuth();
+        alert("Premium wallpaper 🔐");
+        return;
+      }
+      openWallpaperModal(photo);
+    };
+
+    if (isPremiumPhoto && !IS_PREMIUM) {
+      img.style.filter = "blur(8px)";
+    }
+
+    card.appendChild(img);
     gallery.appendChild(card);
   });
 
   page++;
-  loading.style.display = "none";
   isLoading = false;
+  loading.style.display = "none";
 }
 
-/* Infinite Scroll */
-window.addEventListener("scroll", () => {
-  if (innerHeight + scrollY >= document.body.offsetHeight - 400) {
-    loadWallpapers();
-  }
-});
+/*********************************
+  WALLPAPER MODAL
+*********************************/
+function openWallpaperModal(photo) {
+  const modal = document.createElement("div");
+  modal.className = "wallpaper-modal";
 
-/* Search */
-searchInput.onkeydown = e => {
-  if (e.key === "Enter") {
-    query = searchInput.value;
-    page = 1;
-    gallery.innerHTML = "";
-    loadWallpapers();
-  }
-};
+  modal.innerHTML = `
+    <div class="modal-content">
+      <img src="${photo.urls.regular}">
+      <select id="quality">
+        <option value="regular">HD</option>
+        <option value="full">Full HD</option>
+        <option value="raw">4K</option>
+      </select>
+      <button id="downloadBtn">Download</button>
+      <button id="shareBtn">Share</button>
+      <button onclick="this.parentElement.parentElement.remove()">Close</button>
+    </div>
+  `;
 
-/* Categories */
-document.querySelectorAll(".categories button").forEach(btn => {
-  btn.onclick = () => {
-    query = btn.dataset.cat;
-    page = 1;
-    gallery.innerHTML = "";
-    loadWallpapers();
+  document.body.appendChild(modal);
+
+  document.getElementById("downloadBtn").onclick = () => {
+    const q = document.getElementById("quality").value;
+    window.open(photo.urls[q], "_blank");
   };
-});
 
-/* Init */
+  document.getElementById("shareBtn").onclick = async () => {
+    if (navigator.share) {
+      await navigator.share({ url: photo.links.html });
+    } else {
+      navigator.clipboard.writeText(photo.links.html);
+      alert("Link copied!");
+    }
+  };
+}
+
+/*********************************
+  INIT
+*********************************/
 loadWallpapers();
 
-/* =========================
-   INSTALL APP BUTTON (FIXED)
-========================= */
-
-let deferredPrompt;
-const installBtn = document.getElementById("installAppBtn");
-
-/* Capture install prompt */
-window.addEventListener("beforeinstallprompt", (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-
-  if (installBtn) {
-    installBtn.hidden = false;
-    installBtn.classList.add("show");
+window.addEventListener("scroll", () => {
+  if (innerHeight + scrollY >= document.body.offsetHeight - 300) {
+    loadWallpapers();
   }
 });
-
-/* Button click */
-if (installBtn) {
-  installBtn.addEventListener("click", async () => {
-    if (!deferredPrompt) return;
-
-    installBtn.classList.add("loading");
-    deferredPrompt.prompt();
-
-    const choice = await deferredPrompt.userChoice;
-
-    installBtn.classList.remove("loading");
-
-    if (choice.outcome === "accepted") {
-      installBtn.classList.add("installed");
-      setTimeout(() => {
-        installBtn.hidden = true;
-      }, 1200);
-    }
-
-    deferredPrompt = null;
-  });
-}
-
-/* Hide after install */
-window.addEventListener("appinstalled", () => {
-  if (installBtn) {
-    installBtn.hidden = true;
-  }
-});
-/* =========================
-   SIMPLE AUTH (LOCAL)
-========================= */
-
-function showPage(id) {
-  document.querySelectorAll(".page").forEach(p => p.classList.add("hidden"));
-  document.getElementById(id).classList.remove("hidden");
-}
-
-/* Login / Signup */
-function login() {
-  const name = authName.value;
-  const email = authEmail.value;
-
-  if (!name || !email) {
-    alert("Fill all fields");
-    return;
-  }
-
-  localStorage.setItem("user", JSON.stringify({ name, email }));
-
-  profileName.textContent = name;
-  profileEmail.textContent = email;
-
-  showPage("profilePage");
-}
-
-/* Logout */
-function logout() {
-  localStorage.removeItem("user");
-  showPage("authPage");
-}
-
-/* Premium */
-function openPremium() {
-  showPage("premiumPage");
-}
-
-function buyPremium() {
-  alert("Premium activated (demo)");
-  localStorage.setItem("premium", "true");
-}
-
-/* Auto login */
-const savedUser = localStorage.getItem("user");
-if (savedUser) {
-  const user = JSON.parse(savedUser);
-  profileName.textContent = user.name;
-  profileEmail.textContent = user.email;
-  showPage("profilePage");
-} else {
-  showPage("authPage");
-}
-/* =========================
-   FIREBASE CONFIG
-========================= */
-firebase.initializeApp({
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-});
-
-const auth = firebase.auth();
-
-/* =========================
-   PAGE NAV
-========================= */
-function showPage(id) {
-  document.querySelectorAll(".page").forEach(p => p.classList.add("hidden"));
-  document.getElementById(id).classList.remove("hidden");
-}
-
-/* =========================
-   EMAIL LOGIN
-========================= */
-function emailLogin() {
-  const email = emailInput.value;
-  const pass = passwordInput.value;
-
-  auth.signInWithEmailAndPassword(email, pass)
-    .catch(() => auth.createUserWithEmailAndPassword(email, pass));
-}
-
-/* =========================
-   GOOGLE LOGIN
-========================= */
-function googleLogin() {
-  const provider = new firebase.auth.GoogleAuthProvider();
-  auth.signInWithPopup(provider);
-}
-
-/* =========================
-   LOGOUT
-========================= */
-function logout() {
-  auth.signOut();
-}
-
-/* =========================
-   PROFILE
-========================= */
-function openEditProfile() {
-  editName.value = auth.currentUser.displayName || "";
-  showPage("editProfilePage");
-}
-
-function saveProfile() {
-  auth.currentUser.updateProfile({
-    displayName: editName.value
-  }).then(() => {
-    loadProfile();
-    showPage("profilePage");
-  });
-}
-
-function loadProfile() {
-  const u = auth.currentUser;
-  profileName.textContent = u.displayName || "User";
-  profileEmail.textContent = u.email;
-  profilePic.src = u.photoURL || "icons/icon-192.png";
-}
-
-/* =========================
-   PREMIUM (DEMO)
-========================= */
-function openPremium() {
-  showPage("premiumPage");
-}
-
-function activatePremium() {
-  localStorage.setItem("premium", "true");
-  alert("Premium activated!");
-  showPage("profilePage");
-}
-
-/* =========================
-   AUTH STATE
-========================= */
-auth.onAuthStateChanged(user => {
-  if (user) {
-    loadProfile();
-    showPage("profilePage");
-  } else {
-    showPage("authPage");
-  }
-});
-const isPremium = localStorage.getItem("premium") === "true";
-
-if (photo.premium && !isPremium) {
-  img.style.filter = "blur(8px)";
-  img.onclick = openPremium;
-}

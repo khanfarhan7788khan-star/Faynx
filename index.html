@@ -2,164 +2,103 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Faynx  – Premium Wallpapers</title>
+  <title>Faynx</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#00ffd5" />
-  <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="style.css" />
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-
 </head>
 <body>
 
-   <button id="installAppBtn" style="position: fixed; bottom: 16px; right: px; z-index: 1000; ">
-  ⬇ Download App
-</button>
-
-<header class="app-header ios-header">
+<!-- ================= HEADER ================= -->
+<header class="ios-header">
   <div class="header-content">
-    <h1 class="logo">
-      <span>Faynx 
-    </h1>
 
-    <div class="search-box">
-      <span>🔍</span>
-      <input id="searchInput" placeholder="Search wallpapers…" />
+    <!-- LEFT -->
+    <div class="app-title">
+      Fay<span>nx</span>
     </div>
-  </div>
- 
 
+    <!-- CENTER SEARCH -->
+    <div class="header-search">
+      <input 
+        type="text" 
+        id="searchInput" 
+        placeholder="Search wallpapers..."
+      />
+    </div>
+
+    <!-- RIGHT PROFILE -->
+    <div class="profile-wrapper">
+      <button class="profile-btn" onclick="toggleProfileMenu()">
+        👤
+      </button>
+
+      <!-- DROPDOWN -->
+      <div id="profileMenu" class="profile-menu hidden">
+        <button onclick="openAuth()">Login / Sign up</button>
+        <button onclick="openProfileSettings()">Profile Settings</button>
+        <button onclick="logout()">Logout</button>
+      </div>
+    </div>
+
+  </div>
 </header>
 
+<!-- ================= AUTH PAGE ================= -->
+<section id="authPage" class="page auth-page hidden">
+  <div class="auth-card">
+    <h2 id="authTitle">Welcome to Faynx</h2>
+    <p id="authSubtitle">Sign in to continue</p>
 
+    <input id="emailInput" type="email" placeholder="Email" />
+    <input id="passwordInput" type="password" placeholder="Password" />
 
-<nav class="categories">
-  <button data-cat="nature">🌿 Nature</button>
-  <button data-cat="cars">🚗 Cars</button>
-  <button data-cat="anime">🎌 Anime</button>
-  <button data-cat="technology">💻 Tech</button>
-  <button data-cat="space">🌌 Space</button>
-  <button data-cat="gaming">🎮 Gaming</button>
-  <button data-cat="minimal">⚪ Minimal</button>
-  <button data-cat="dark">🌑 Dark</button>
-</nav>
+    <button class="primary-btn" onclick="emailLogin()">Login</button>
+    <button class="secondary-btn" onclick="googleLogin()">Continue with Google</button>
 
-<main>
-  <section id="gallery" class="gallery"></section>
-  <p id="loading" class="loading">Loading wallpapers…</p>
-</main>
+    <p class="auth-toggle">
+      Don’t have an account?
+      <span onclick="toggleAuthMode()">Sign up</span>
+    </p>
 
-<!-- PREVIEW MODAL -->
-<div id="previewModal" class="modal">
-  <span class="close">✕</span>
-
-  <div class="modal-actions">
-    <select id="qualitySelect">
-      <option value="regular">HD</option>
-      <option value="full">Full HD</option>
-      <option value="raw">4K</option>
-    </select>
-    <button id="shareBtn">📤 Share</button>
+    <button class="secondary-btn" onclick="continueAsGuest()">
+      Continue as Guest
+    </button>
   </div>
+</section>
 
-  <img id="previewImage" />
-  <button id="modalDownload">⬇ Download</button>
-</div>
-
-<script src="app.js"></script>
-</body>
-</html>
-<section id="profilePage" class="page hidden">
+<!-- ================= PROFILE SETTINGS ================= -->
+<section id="profileSettings" class="page hidden">
   <div class="profile-card">
-    <img src="icons/icon-192.png" class="profile-avatar" />
-    <h2 id="profileName">Guest User</h2>
-    <p id="profileEmail">Not logged in</p>
 
-    <button onclick="openPremium()" class="primary-btn">
-      Go Premium ⭐
+    <img 
+      id="settingsAvatar" 
+      class="profile-avatar" 
+      src="https://i.pravatar.cc/150"
+    />
+
+    <h3 id="settingsName">Guest</h3>
+    <p id="settingsEmail">Not logged in</p>
+
+    <p class="profile-status">
+      Plan: <strong id="settingsPlan">Free</strong>
+    </p>
+
+    <button class="primary-btn" onclick="openAuth()">
+      Login / Sign up
     </button>
 
-    <button onclick="logout()" class="secondary-btn">
+    <button class="secondary-btn" onclick="logout()">
       Logout
     </button>
   </div>
 </section>
-<section id="authPage" class="page hidden">
-  <div class="auth-card">
-    <h2>Welcome to Faynx  </h2>
 
-    <input id="authName" placeholder="Your Name" />
-    <input id="authEmail" placeholder="Email" />
-    <input id="authPassword" type="password" placeholder="Password" />
+<!-- ================= GALLERY ================= -->
+<main id="gallery" class="gallery"></main>
 
-    <button onclick="login()" class="primary-btn">
-      Login / Sign Up
-    </button>
-  </div>
-</section>
-<section id="premiumPage" class="page hidden">
-  <div class="premium-card">
-    <h2>✨ Faynx  Premium</h2>
-    <ul>
-      <li>✔ 4K & AMOLED Wallpapers</li>
-      <li>✔ No Ads</li>
-      <li>✔ Offline Downloads</li>
-      <li>✔ Exclusive Collections</li>
-    </ul>
+<!-- ================= LOADING ================= -->
+<div id="loading">Loading...</div>
 
-    <button onclick="buyPremium()" class="primary-btn">
-      Upgrade Now 🚀
-    </button>
-  </div>
-</section>
-<section id="authPage" class="page hidden">
-  <div class="card">
-    <h2>Welcome</h2>
-
-    <input id="emailInput" placeholder="Email">
-    <input id="passwordInput" type="password" placeholder="Password">
-
-    <button onclick="emailLogin()" class="primary-btn">Login / Sign Up</button>
-
-    <div class="divider">OR</div>
-
-    <button onclick="googleLogin()" class="google-btn">
-      Sign in with Google
-    </button>
-  </div>
-</section>
-<section id="profilePage" class="page hidden">
-  <div class="card">
-    <img id="profilePic" class="avatar">
-    <h3 id="profileName"></h3>
-    <p id="profileEmail"></p>
-
-    <button onclick="openEditProfile()" class="primary-btn">Edit Profile</button>
-    <button onclick="openPremium()" class="primary-btn">Go Premium ⭐</button>
-    <button onclick="logout()" class="secondary-btn">Logout</button>
-  </div>
-</section>
-<section id="editProfilePage" class="page hidden">
-  <div class="card">
-    <h3>Edit Profile</h3>
-
-    <input id="editName" placeholder="Display Name">
-
-    <button onclick="saveProfile()" class="primary-btn">Save</button>
-  </div>
-</section>
-<section id="premiumPage" class="page hidden">
-  <div class="card">
-    <h2>Premium</h2>
-    <ul>
-      <li>✔ 4K & AMOLED Wallpapers</li>
-      <li>✔ No Ads</li>
-      <li>✔ Offline Access</li>
-    </ul>
-
-    <button onclick="activatePremium()" class="primary-btn">
-      Subscribe ₹99 / month
-    </button>
-  </div>
-</section>
+<script type="module" src="app.js"></script>
+</body>
+</html>
