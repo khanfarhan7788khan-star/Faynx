@@ -48,32 +48,22 @@ const profilePageName = document.getElementById("profilePageName");
 const profilePageEmail = document.getElementById("profilePageEmail");
 
 const profileMenu = document.getElementById("profileMenu");
-
 const gallery = document.getElementById("gallery");
 const loading = document.getElementById("loading");
 const searchInput = document.getElementById("searchInput");
-
-/*********************************
-  STATE
-*********************************/
-let isSignupMode = false;
-let page = 1;
-let isLoading = false;
-let currentQuery = "wallpaper";
 
 const DEFAULT_AVATAR = "https://i.pravatar.cc/150";
 
 /*********************************
   PROFILE MENU
 *********************************/
-window.toggleProfileMenu = () => {
+window.toggleProfileMenu = (e) => {
+  e.stopPropagation();
   profileMenu.classList.toggle("hidden");
 };
 
-document.addEventListener("click", e => {
-  if (!e.target.closest(".profile-wrapper")) {
-    profileMenu.classList.add("hidden");
-  }
+document.addEventListener("click", () => {
+  profileMenu.classList.add("hidden");
 });
 
 /*********************************
@@ -86,6 +76,7 @@ window.openAuth = () => {
 
 window.closeAuth = () => authModal.classList.add("hidden");
 
+let isSignupMode = false;
 window.toggleAuthMode = () => {
   isSignupMode = !isSignupMode;
   authModeTitle.textContent = isSignupMode ? "Sign Up" : "Login";
@@ -102,7 +93,6 @@ window.googleLogin = async () => {
 window.handleAuth = async () => {
   const email = emailInput.value.trim();
   const password = passwordInput.value.trim();
-  const remember = rememberMe.checked;
 
   if (!email || !password) {
     authError.textContent = "Email and password required";
@@ -116,14 +106,15 @@ window.handleAuth = async () => {
   try {
     await setPersistence(
       auth,
-      remember ? browserLocalPersistence : browserSessionPersistence
+      rememberMe.checked
+        ? browserLocalPersistence
+        : browserSessionPersistence
     );
 
-    if (isSignupMode) {
-      await createUserWithEmailAndPassword(auth, email, password);
-    } else {
-      await signInWithEmailAndPassword(auth, email, password);
-    }
+    isSignupMode
+      ? await createUserWithEmailAndPassword(auth, email, password)
+      : await signInWithEmailAndPassword(auth, email, password);
+
   } catch (e) {
     authError.textContent = e.message;
     authError.classList.remove("hidden");
@@ -138,7 +129,7 @@ window.logout = async () => {
 };
 
 /*********************************
-  PROFILE PAGE CONTROLS
+  PROFILE PAGE
 *********************************/
 window.openProfilePage = () => {
   profileMenu.classList.add("hidden");
@@ -150,13 +141,12 @@ window.closeProfilePage = () => {
 };
 
 /*********************************
-  AUTH STATE (SINGLE SOURCE OF TRUTH)
+  AUTH STATE (SINGLE SOURCE)
 *********************************/
 onAuthStateChanged(auth, user => {
   if (user) {
     profileAvatar.src = user.photoURL || DEFAULT_AVATAR;
-
-    profilePageAvatar.src = user.photoURL || DEFAULT_AVATAR;
+    profilePageAvatar.src = profileAvatar.src;
     profilePageName.textContent = user.displayName || "User";
     profilePageEmail.textContent = user.email;
 
@@ -169,7 +159,6 @@ onAuthStateChanged(auth, user => {
     loginBtn.classList.remove("hidden");
     profileBtn.classList.add("hidden");
     logoutBtn.classList.add("hidden");
-
     profilePage.classList.add("hidden");
   }
 
@@ -180,6 +169,9 @@ onAuthStateChanged(auth, user => {
   UNSPLASH
 *********************************/
 const ACCESS_KEY = "3wPR19vEBSEYPY4kDbGgTH9jClLsKqgM93J_ZK56SP0";
+let page = 1;
+let isLoading = false;
+let currentQuery = "wallpaper";
 
 async function loadWallpapers(reset = false) {
   if (isLoading) return;
@@ -204,7 +196,7 @@ async function loadWallpapers(reset = false) {
     card.className = "card";
 
     const img = document.createElement("img");
-    img.src = photo.urls.small;
+    img.src = photo.urls.regular;
 
     const isPremium = Math.random() < 0.3;
     img.onclick = () =>
@@ -216,6 +208,7 @@ async function loadWallpapers(reset = false) {
       const lock = document.createElement("div");
       lock.className = "premium-lock";
       lock.innerHTML = "<span>🔒</span>";
+      lock.style.zIndex = "5";
       card.appendChild(lock);
     }
 
@@ -228,7 +221,7 @@ async function loadWallpapers(reset = false) {
 }
 
 /*********************************
-  WALLPAPER MODALS
+  WALLPAPER MODAL
 *********************************/
 function openWallpaperModal(photo) {
   const modal = document.createElement("div");
@@ -236,78 +229,40 @@ function openWallpaperModal(photo) {
 
   modal.innerHTML = `
     <div class="modal-content">
-
       <button class="back-btn">← Back</button>
-
       <img id="modalImage" src="${photo.urls.regular}" />
-
-      <!-- QUALITY SELECT -->
       <select id="qualitySelect">
         <option value="regular">HD</option>
         <option value="full">Full HD</option>
         <option value="raw">4K</option>
       </select>
-
-      <!-- DOWNLOAD -->
-      <button id="downloadBtn">Download Wallpaper</button>
-
-      <!-- SHARE -->
+      <button id="downloadBtn">Download</button>
       <button id="shareBtn">Share</button>
-
-      <!-- APP DOWNLOAD -->
-      <button id="appDownloadBtn">Download App</button>
-
     </div>
   `;
 
   document.body.appendChild(modal);
 
-  const imageEl = modal.querySelector("#modalImage");
-  const qualitySelect = modal.querySelector("#qualitySelect");
+  const img = modal.querySelector("#modalImage");
+  const quality = modal.querySelector("#qualitySelect");
 
-  /* QUALITY CHANGE */
-  qualitySelect.onchange = () => {
-    imageEl.src = photo.urls[qualitySelect.value];
-  };
+  quality.onchange = () => img.src = photo.urls[quality.value];
 
-  /* WALLPAPER DOWNLOAD */
-  modal.querySelector("#downloadBtn").onclick = () => {
-    const quality = qualitySelect.value;
-    const link = document.createElement("a");
-    link.href = photo.urls[quality];
-    link.download = "faynx-wallpaper.jpg";
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-  };
+  modal.querySelector("#downloadBtn").onclick = () =>
+    window.open(photo.urls[quality.value], "_blank");
 
-  /* SHARE */
   modal.querySelector("#shareBtn").onclick = async () => {
-    if (navigator.share) {
-      navigator.share({
-        title: "Faynx Wallpaper",
-        url: photo.links.html
-      });
-    } else {
-      await navigator.clipboard.writeText(photo.links.html);
-      alert("Wallpaper link copied");
-    }
+    navigator.share
+      ? navigator.share({ title: "Faynx", url: photo.links.html })
+      : navigator.clipboard.writeText(photo.links.html);
   };
 
-  /* APP DOWNLOAD (CHANGE LINK LATER) */
-  modal.querySelector("#appDownloadBtn").onclick = () => {
-    window.open("https://your-app-link-here.com", "_blank");
-  };
-
-  /* CLOSE */
   modal.querySelector(".back-btn").onclick = () => modal.remove();
 }
-
 
 function showPremiumComingSoon() {
   const modal = document.createElement("div");
   modal.className = "wallpaper-modal";
-
   modal.innerHTML = `
     <div class="modal-content">
       <h2>🔒 Premium Wallpapers</h2>
@@ -315,7 +270,6 @@ function showPremiumComingSoon() {
       <button class="back-btn">Close</button>
     </div>
   `;
-
   document.body.appendChild(modal);
   modal.querySelector(".back-btn").onclick = () => modal.remove();
 }
@@ -323,9 +277,13 @@ function showPremiumComingSoon() {
 /*********************************
   SEARCH & INIT
 *********************************/
+let searchTimeout;
 searchInput.addEventListener("input", () => {
-  currentQuery = searchInput.value.trim() || "wallpaper";
-  loadWallpapers(true);
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(() => {
+    currentQuery = searchInput.value.trim() || "wallpaper";
+    loadWallpapers(true);
+  }, 400);
 });
 
 window.addEventListener("scroll", () => {
@@ -335,17 +293,10 @@ window.addEventListener("scroll", () => {
 });
 
 loadWallpapers();
+
 /*********************************
   APP DOWNLOAD BUTTON
 *********************************/
-const appDownloadBtn = document.getElementById("appDownloadFloat");
-
-if (appDownloadBtn) {
-  appDownloadBtn.onclick = () => {
-    // CHANGE THIS LINK WHEN YOUR APP IS READY
-    window.open(
-      "https://your-app-download-link.com",
-      "_blank"
-    );
-  };
-}
+document.getElementById("appDownloadFloat")?.addEventListener("click", () => {
+  window.open("https://your-app-download-link.com", "_blank");
+});

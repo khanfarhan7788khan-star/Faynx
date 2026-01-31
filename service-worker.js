@@ -1,14 +1,13 @@
-const CACHE = "faynx-v2"; // increment when updating
-const API_CACHE = "faynx-api-v1";
+const APP_CACHE = "faynx-app-v3";
+const API_CACHE = "faynx-api-v2";
 
 /*********************************
-  FILES TO CACHE (APP SHELL)
+  APP SHELL (SAFE FILES ONLY)
 *********************************/
-const FILES = [
+const APP_FILES = [
   "./",
   "./index.html",
   "./style.css",
-  "./app.js",
   "./manifest.json",
   "./offline.html"
 ];
@@ -18,20 +17,20 @@ const FILES = [
 *********************************/
 self.addEventListener("install", event => {
   event.waitUntil(
-    caches.open(CACHE).then(cache => cache.addAll(FILES))
+    caches.open(APP_CACHE).then(cache => cache.addAll(APP_FILES))
   );
   self.skipWaiting();
 });
 
 /*********************************
-  ACTIVATE (CLEAN OLD CACHES)
+  ACTIVATE
 *********************************/
 self.addEventListener("activate", event => {
   event.waitUntil(
     caches.keys().then(keys =>
       Promise.all(
         keys.map(key => {
-          if (![CACHE, API_CACHE].includes(key)) {
+          if (![APP_CACHE, API_CACHE].includes(key)) {
             return caches.delete(key);
           }
         })
@@ -42,37 +41,38 @@ self.addEventListener("activate", event => {
 });
 
 /*********************************
-  FETCH STRATEGY
+  FETCH
 *********************************/
 self.addEventListener("fetch", event => {
-  const { request } = event;
+  const req = event.request;
 
-  // 🌐 Unsplash API → Network First
-  if (request.url.includes("api.unsplash.com")) {
+  /* 🔁 UNSPLASH API → NETWORK FIRST */
+  if (req.url.includes("api.unsplash.com")) {
     event.respondWith(
-      fetch(request)
+      fetch(req)
         .then(res => {
           const clone = res.clone();
-          caches.open(API_CACHE).then(c => c.put(request, clone));
+          caches.open(API_CACHE).then(cache => cache.put(req, clone));
           return res;
         })
-        .catch(() => caches.match(request))
+        .catch(() => caches.match(req))
     );
     return;
   }
 
-  // 📦 App shell → Cache First
-  event.respondWith(
-    caches.match(request).then(cached => {
-      if (cached) return cached;
+  /* 📦 APP FILES → CACHE FIRST */
+  if (req.method === "GET" && req.headers.get("accept")?.includes("text/html")) {
+    event.respondWith(
+      caches.match(req).then(cached => {
+        return (
+          cached ||
+          fetch(req).catch(() => caches.match("./offline.html"))
+        );
+      })
+    );
+    return;
+  }
 
-      return fetch(request)
-        .then(res => {
-          const clone = res.clone();
-          caches.open(CACHE).then(c => c.put(request, clone));
-          return res;
-        })
-        .catch(() => caches.match("./offline.html"));
-    })
-  );
+  /* ⚙️ DEFAULT → NETWORK */
+  event.respondWith(fetch(req));
 });

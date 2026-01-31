@@ -9,16 +9,16 @@
 
 <body>
 
-<!-- ================= HEADER (TOP ONLY) ================= -->
+<!-- ================= HEADER ================= -->
 <header class="ios-header">
   <div class="header-content">
 
-    <!-- LEFT: APP NAME -->
+    <!-- LEFT -->
     <div class="app-title">
       Fay<span>nx</span>
     </div>
 
-    <!-- CENTER: SEARCH -->
+    <!-- CENTER SEARCH -->
     <div class="header-search">
       <input
         type="text"
@@ -27,9 +27,13 @@
       />
     </div>
 
-    <!-- RIGHT: PROFILE -->
+    <!-- RIGHT PROFILE -->
     <div class="profile-wrapper">
-      <button class="profile-btn" onclick="toggleProfileMenu()">
+      <button
+        class="profile-btn"
+        onclick="toggleProfileMenu(event)"
+        aria-label="Profile"
+      >
         <img
           id="profileAvatar"
           src="https://i.pravatar.cc/150"
@@ -37,12 +41,8 @@
         />
       </button>
 
-      <!-- PROFILE DROPDOWN -->
       <div id="profileMenu" class="profile-menu hidden">
-        <!-- Shown when logged OUT -->
         <button id="loginBtn" onclick="openAuth()">Login / Sign up</button>
-
-        <!-- Shown when logged IN -->
         <button id="profileBtn" class="hidden" onclick="openProfilePage()">
           Profile Settings
         </button>
@@ -55,7 +55,7 @@
   </div>
 </header>
 
-<!-- ================= AUTH MODAL (HIDDEN BY DEFAULT) ================= -->
+<!-- ================= AUTH MODAL ================= -->
 <div id="authModal" class="auth-modal hidden">
   <div class="auth-box">
 
@@ -86,7 +86,7 @@
   </div>
 </div>
 
-<!-- ================= PROFILE PAGE (HIDDEN BY DEFAULT) ================= -->
+<!-- ================= PROFILE PAGE ================= -->
 <section id="profilePage" class="profile-page hidden">
   <img id="profilePageAvatar" src="https://i.pravatar.cc/150" />
   <h3 id="profilePageName">User</h3>
@@ -103,12 +103,17 @@
 <!-- ================= LOADING ================= -->
 <div id="loading">Loading...</div>
 
-<script type="module" src="app.js"></script>
-
-<!-- APP DOWNLOAD FLOATING BUTTON -->
-<button id="appDownloadFloat" class="app-download-float">
-  ⬇️ 
+<!-- ================= FLOATING APP DOWNLOAD ================= -->
+<button
+  id="appDownloadFloat"
+  class="app-download-float"
+  aria-label="Download App"
+>
+  ⬇️ Download App
 </button>
+
+<!-- ================= SCRIPT ================= -->
+<script type="module" src="app.js"></script>
 
 </body>
 </html>
