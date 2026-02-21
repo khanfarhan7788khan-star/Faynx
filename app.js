@@ -25,144 +25,152 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 /*********************************
-  DOM
+  DOM CACHE
 *********************************/
-const authModal = document.getElementById("authModal");
-const authError = document.getElementById("authError");
-const authLoader = document.getElementById("authLoader");
-const authModeTitle = document.getElementById("authModeTitle");
-const authSubmitBtn = document.getElementById("authSubmitBtn");
+const $ = id => document.getElementById(id);
 
-const emailInput = document.getElementById("emailInput");
-const passwordInput = document.getElementById("passwordInput");
-const rememberMe = document.getElementById("rememberMe");
-
-const loginBtn = document.getElementById("loginBtn");
-const logoutBtn = document.getElementById("logoutBtn");
-const profileBtn = document.getElementById("profileBtn");
-const profileAvatar = document.getElementById("profileAvatar");
-
-const profilePage = document.getElementById("profilePage");
-const profilePageAvatar = document.getElementById("profilePageAvatar");
-const profilePageName = document.getElementById("profilePageName");
-const profilePageEmail = document.getElementById("profilePageEmail");
-
-const profileMenu = document.getElementById("profileMenu");
-const gallery = document.getElementById("gallery");
-const loading = document.getElementById("loading");
-const searchInput = document.getElementById("searchInput");
+const elements = {
+  authModal: $("authModal"),
+  authError: $("authError"),
+  authLoader: $("authLoader"),
+  authModeTitle: $("authModeTitle"),
+  authSubmitBtn: $("authSubmitBtn"),
+  emailInput: $("emailInput"),
+  passwordInput: $("passwordInput"),
+  rememberMe: $("rememberMe"),
+  loginBtn: $("loginBtn"),
+  logoutBtn: $("logoutBtn"),
+  profileBtn: $("profileBtn"),
+  profileAvatar: $("profileAvatar"),
+  profilePage: $("profilePage"),
+  profilePageAvatar: $("profilePageAvatar"),
+  profilePageName: $("profilePageName"),
+  profilePageEmail: $("profilePageEmail"),
+  profileMenu: $("profileMenu"),
+  gallery: $("gallery"),
+  loading: $("loading"),
+  searchInput: $("searchInput"),
+  appDownloadFloat: $("appDownloadFloat")
+};
 
 const DEFAULT_AVATAR = "https://i.pravatar.cc/150";
 
 /*********************************
   PROFILE MENU
 *********************************/
-window.toggleProfileMenu = (e) => {
+$("profileToggleBtn")?.addEventListener("click", e => {
   e.stopPropagation();
-  profileMenu.classList.toggle("hidden");
-};
+  elements.profileMenu.classList.toggle("hidden");
+});
 
 document.addEventListener("click", () => {
-  profileMenu.classList.add("hidden");
+  elements.profileMenu.classList.add("hidden");
 });
 
 /*********************************
   AUTH MODAL
 *********************************/
-window.openAuth = () => {
-  profileMenu.classList.add("hidden");
-  authModal.classList.remove("hidden");
-};
-
-window.closeAuth = () => authModal.classList.add("hidden");
-
 let isSignupMode = false;
-window.toggleAuthMode = () => {
+
+$("loginBtn")?.addEventListener("click", openAuth);
+$("closeAuthBtn")?.addEventListener("click", closeAuth);
+$("toggleAuthModeBtn")?.addEventListener("click", toggleAuthMode);
+$("authSubmitBtn")?.addEventListener("click", handleAuth);
+$("googleBtn")?.addEventListener("click", googleLogin);
+
+function openAuth() {
+  elements.profileMenu.classList.add("hidden");
+  elements.authModal.classList.remove("hidden");
+}
+
+function closeAuth() {
+  elements.authModal.classList.add("hidden");
+}
+
+function toggleAuthMode() {
   isSignupMode = !isSignupMode;
-  authModeTitle.textContent = isSignupMode ? "Sign Up" : "Login";
-  authSubmitBtn.textContent = isSignupMode ? "Create Account" : "Login";
-};
+  elements.authModeTitle.textContent = isSignupMode ? "Sign Up" : "Login";
+  elements.authSubmitBtn.textContent = isSignupMode ? "Create Account" : "Login";
+}
 
 /*********************************
   AUTH ACTIONS
 *********************************/
-window.googleLogin = async () => {
-  await signInWithPopup(auth, new GoogleAuthProvider());
-};
+async function googleLogin() {
+  try {
+    await signInWithPopup(auth, new GoogleAuthProvider());
+  } catch (err) {
+    showError(err.message);
+  }
+}
 
-window.handleAuth = async () => {
-  const email = emailInput.value.trim();
-  const password = passwordInput.value.trim();
+async function handleAuth() {
+  const email = elements.emailInput.value.trim();
+  const password = elements.passwordInput.value.trim();
 
   if (!email || !password) {
-    authError.textContent = "Email and password required";
-    authError.classList.remove("hidden");
+    showError("Email and password required");
     return;
   }
 
-  authError.classList.add("hidden");
-  authLoader.classList.remove("hidden");
-
   try {
+    elements.authLoader.classList.remove("hidden");
+
     await setPersistence(
       auth,
-      rememberMe.checked
+      elements.rememberMe.checked
         ? browserLocalPersistence
         : browserSessionPersistence
     );
 
-    isSignupMode
-      ? await createUserWithEmailAndPassword(auth, email, password)
-      : await signInWithEmailAndPassword(auth, email, password);
+    if (isSignupMode) {
+      await createUserWithEmailAndPassword(auth, email, password);
+    } else {
+      await signInWithEmailAndPassword(auth, email, password);
+    }
 
-  } catch (e) {
-    authError.textContent = e.message;
-    authError.classList.remove("hidden");
+  } catch (err) {
+    showError(err.message);
   } finally {
-    authLoader.classList.add("hidden");
+    elements.authLoader.classList.add("hidden");
   }
-};
+}
 
-window.logout = async () => {
+function showError(message) {
+  elements.authError.textContent = message;
+  elements.authError.classList.remove("hidden");
+}
+
+async function logout() {
   await signOut(auth);
-  profileMenu.classList.add("hidden");
-};
+  elements.profileMenu.classList.add("hidden");
+}
+
+elements.logoutBtn?.addEventListener("click", logout);
 
 /*********************************
-  PROFILE PAGE
-*********************************/
-window.openProfilePage = () => {
-  profileMenu.classList.add("hidden");
-  profilePage.classList.remove("hidden");
-};
-
-window.closeProfilePage = () => {
-  profilePage.classList.add("hidden");
-};
-
-/*********************************
-  AUTH STATE (SINGLE SOURCE)
+  AUTH STATE
 *********************************/
 onAuthStateChanged(auth, user => {
   if (user) {
-    profileAvatar.src = user.photoURL || DEFAULT_AVATAR;
-    profilePageAvatar.src = profileAvatar.src;
-    profilePageName.textContent = user.displayName || "User";
-    profilePageEmail.textContent = user.email;
+    const avatar = user.photoURL || DEFAULT_AVATAR;
 
-    loginBtn.classList.add("hidden");
-    profileBtn.classList.remove("hidden");
-    logoutBtn.classList.remove("hidden");
+    elements.profileAvatar.src = avatar;
+    elements.profilePageAvatar.src = avatar;
+    elements.profilePageName.textContent = user.displayName || "User";
+    elements.profilePageEmail.textContent = user.email;
+
+    elements.loginBtn.classList.add("hidden");
+    elements.profileBtn.classList.remove("hidden");
+    elements.logoutBtn.classList.remove("hidden");
   } else {
-    profileAvatar.src = DEFAULT_AVATAR;
-
-    loginBtn.classList.remove("hidden");
-    profileBtn.classList.add("hidden");
-    logoutBtn.classList.add("hidden");
-    profilePage.classList.add("hidden");
+    elements.profileAvatar.src = DEFAULT_AVATAR;
+    elements.loginBtn.classList.remove("hidden");
+    elements.profileBtn.classList.add("hidden");
+    elements.logoutBtn.classList.add("hidden");
   }
 
-  authModal.classList.add("hidden");
+  closeAuth();
 });
 
 /*********************************
@@ -178,50 +186,49 @@ async function loadWallpapers(reset = false) {
   isLoading = true;
 
   if (reset) {
-    gallery.innerHTML = "";
+    elements.gallery.innerHTML = "";
     page = 1;
   }
 
-  loading.style.display = "block";
+  elements.loading.classList.remove("hidden");
 
-  const res = await fetch(
-    `https://api.unsplash.com/search/photos?query=${currentQuery}&page=${page}&per_page=12`,
-    { headers: { Authorization: `Client-ID ${ACCESS_KEY}` } }
-  );
+  try {
+    const res = await fetch(
+      `https://api.unsplash.com/search/photos?query=${currentQuery}&page=${page}&per_page=12`,
+      { headers: { Authorization: `Client-ID ${ACCESS_KEY}` } }
+    );
 
-  const data = await res.json();
+    if (!res.ok) throw new Error("API rate limit or network error");
 
-  data.results.forEach(photo => {
-    const card = document.createElement("div");
-    card.className = "card";
+    const data = await res.json();
 
-    const img = document.createElement("img");
-    img.src = photo.urls.regular;
+    data.results.forEach(createCard);
 
-    const isPremium = Math.random() < 0.3;
-    img.onclick = () =>
-      isPremium ? showPremiumComingSoon() : openWallpaperModal(photo);
-
-    card.appendChild(img);
-
-    if (isPremium) {
-      const lock = document.createElement("div");
-      lock.className = "premium-lock";
-      lock.innerHTML = "<span>🔒</span>";
-      lock.style.zIndex = "5";
-      card.appendChild(lock);
-    }
-
-    gallery.appendChild(card);
-  });
-
-  page++;
-  isLoading = false;
-  loading.style.display = "none";
+    page++;
+  } catch (err) {
+    console.error(err);
+  } finally {
+    isLoading = false;
+    elements.loading.classList.add("hidden");
+  }
 }
 
+function createCard(photo) {
+  const card = document.createElement("div");
+  card.className = "card";
+
+  const img = document.createElement("img");
+  img.src = photo.urls.small;
+  img.loading = "lazy";
+
+  img.addEventListener("click", () => openWallpaperModal(photo));
+  card.appendChild(img);
+  elements.gallery.appendChild(card);
+}
+
+
 /*********************************
-  WALLPAPER MODAL
+  WALLPAPER MODAL SYSTEM
 *********************************/
 function openWallpaperModal(photo) {
   const modal = document.createElement("div");
@@ -230,12 +237,15 @@ function openWallpaperModal(photo) {
   modal.innerHTML = `
     <div class="modal-content">
       <button class="back-btn">← Back</button>
+
       <img id="modalImage" src="${photo.urls.regular}" />
+
       <select id="qualitySelect">
         <option value="regular">HD</option>
         <option value="full">Full HD</option>
         <option value="raw">4K</option>
       </select>
+
       <button id="downloadBtn">Download</button>
       <button id="shareBtn">Share</button>
     </div>
@@ -243,51 +253,95 @@ function openWallpaperModal(photo) {
 
   document.body.appendChild(modal);
 
-  const img = modal.querySelector("#modalImage");
-  const quality = modal.querySelector("#qualitySelect");
+  const modalImage = modal.querySelector("#modalImage");
+  const qualitySelect = modal.querySelector("#qualitySelect");
+  const downloadBtn = modal.querySelector("#downloadBtn");
+  const shareBtn = modal.querySelector("#shareBtn");
 
-  quality.onchange = () => img.src = photo.urls[quality.value];
+  /* ===== QUALITY CHANGE ===== */
+  qualitySelect.addEventListener("change", () => {
+    const selectedQuality = qualitySelect.value;
+    modalImage.src = photo.urls[selectedQuality];
+  });
 
-  modal.querySelector("#downloadBtn").onclick = () =>
-    window.open(photo.urls[quality.value], "_blank");
+  /* ===== DOWNLOAD ===== */
+  downloadBtn.addEventListener("click", async () => {
+    const selectedQuality = qualitySelect.value;
+    const imageUrl = photo.urls[selectedQuality];
 
-  modal.querySelector("#shareBtn").onclick = async () => {
-    navigator.share
-      ? navigator.share({ title: "Faynx", url: photo.links.html })
-      : navigator.clipboard.writeText(photo.links.html);
-  };
+    try {
+      const response = await fetch(imageUrl);
+      const blob = await response.blob();
 
-  modal.querySelector(".back-btn").onclick = () => modal.remove();
-}
+      const blobUrl = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = "faynx-wallpaper.jpg";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
 
-function showPremiumComingSoon() {
-  const modal = document.createElement("div");
-  modal.className = "wallpaper-modal";
-  modal.innerHTML = `
-    <div class="modal-content">
-      <h2>🔒 Premium Wallpapers</h2>
-      <p>Coming soon</p>
-      <button class="back-btn">Close</button>
-    </div>
-  `;
-  document.body.appendChild(modal);
-  modal.querySelector(".back-btn").onclick = () => modal.remove();
+      URL.revokeObjectURL(blobUrl);
+    } catch (err) {
+      window.open(imageUrl, "_blank");
+    }
+  });
+
+  /* ===== SHARE ===== */
+  shareBtn.addEventListener("click", async () => {
+    const shareUrl = photo.links.html;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: "Faynx Wallpaper",
+          text: "Check out this wallpaper!",
+          url: shareUrl
+        });
+      } catch (err) {
+        console.log("Share cancelled");
+      }
+    } else {
+      await navigator.clipboard.writeText(shareUrl);
+      alert("Link copied to clipboard");
+    }
+  });
+
+  /* ===== CLOSE METHODS ===== */
+  modal.querySelector(".back-btn").addEventListener("click", () => {
+    modal.remove();
+  });
+
+  modal.addEventListener("click", e => {
+    if (e.target === modal) modal.remove();
+  });
+
+  document.addEventListener("keydown", function escClose(e) {
+    if (e.key === "Escape") {
+      modal.remove();
+      document.removeEventListener("keydown", escClose);
+    }
+  });
 }
 
 /*********************************
-  SEARCH & INIT
+  SEARCH + SCROLL
 *********************************/
 let searchTimeout;
-searchInput.addEventListener("input", () => {
+
+elements.searchInput?.addEventListener("input", () => {
   clearTimeout(searchTimeout);
   searchTimeout = setTimeout(() => {
-    currentQuery = searchInput.value.trim() || "wallpaper";
+    currentQuery = elements.searchInput.value.trim() || "wallpaper";
     loadWallpapers(true);
-  }, 400);
+  }, 500);
 });
 
 window.addEventListener("scroll", () => {
-  if (innerHeight + scrollY >= document.body.offsetHeight - 300) {
+  if (
+    window.innerHeight + window.scrollY >=
+    document.body.offsetHeight - 400
+  ) {
     loadWallpapers();
   }
 });
@@ -295,8 +349,8 @@ window.addEventListener("scroll", () => {
 loadWallpapers();
 
 /*********************************
-  APP DOWNLOAD BUTTON
+  APP DOWNLOAD
 *********************************/
-document.getElementById("appDownloadFloat")?.addEventListener("click", () => {
+elements.appDownloadFloat?.addEventListener("click", () => {
   window.open("https://your-app-download-link.com", "_blank");
 });

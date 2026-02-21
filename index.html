@@ -1,9 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- ===== META ===== -->
   <meta charset="UTF-8" />
-  <title>Faynx</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Faynx - High quality wallpapers with premium experience." />
+  <meta name="theme-color" content="#0f172a" />
+
+  <title>Faynx | Premium Wallpapers</title>
+
+  <!-- Favicon -->
+  <link rel="icon" href="favicon.ico" />
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json" />
+
+  <!-- Performance -->
+  <link rel="preconnect" href="https://i.pravatar.cc" />
+
+  <!-- CSS -->
   <link rel="stylesheet" href="style.css" />
 </head>
 
@@ -14,41 +29,36 @@
   <div class="header-content">
 
     <!-- LEFT -->
-    <div class="app-title">
+    <h1 class="app-title">
       Fay<span>nx</span>
-    </div>
+    </h1>
 
     <!-- CENTER SEARCH -->
     <div class="header-search">
       <input
-        type="text"
+        type="search"
         id="searchInput"
         placeholder="Search wallpapers..."
+        aria-label="Search wallpapers"
       />
     </div>
 
     <!-- RIGHT PROFILE -->
-    <div class="profile-wrapper">
-      <button
-        class="profile-btn"
-        onclick="toggleProfileMenu(event)"
-        aria-label="Profile"
-      >
-        <img
-          id="profileAvatar"
-          src="https://i.pravatar.cc/150"
-          alt="Profile"
-        />
-      </button>
+    <div class="header-right">
+      <div class="profile-wrapper">
+        <button class="profile-btn" id="profileToggleBtn" aria-label="Profile">
+          <img
+            id="profileAvatar"
+            src="https://i.pravatar.cc/150"
+            alt="User profile"
+          />
+        </button>
 
-      <div id="profileMenu" class="profile-menu hidden">
-        <button id="loginBtn" onclick="openAuth()">Login / Sign up</button>
-        <button id="profileBtn" class="hidden" onclick="openProfilePage()">
-          Profile Settings
-        </button>
-        <button id="logoutBtn" class="hidden" onclick="logout()">
-          Logout
-        </button>
+        <div id="profileMenu" class="profile-menu hidden">
+          <button id="loginBtn">Login / Sign up</button>
+          <button id="profileBtn" class="hidden">Profile Settings</button>
+          <button id="logoutBtn" class="hidden">Logout</button>
+        </div>
       </div>
     </div>
 
@@ -56,7 +66,7 @@
 </header>
 
 <!-- ================= AUTH MODAL ================= -->
-<div id="authModal" class="auth-modal hidden">
+<div id="authModal" class="auth-modal hidden" role="dialog" aria-modal="true">
   <div class="auth-box">
 
     <h2 id="authModeTitle">Login</h2>
@@ -71,28 +81,28 @@
 
     <p id="authError" class="auth-error hidden"></p>
 
-    <button id="authSubmitBtn" onclick="handleAuth()">Login</button>
-    <button onclick="googleLogin()">Continue with Google</button>
+    <button id="authSubmitBtn">Login</button>
+    <button id="googleBtn">Continue with Google</button>
 
     <p class="auth-toggle">
       Don’t have an account?
-      <span onclick="toggleAuthMode()">Sign up</span>
+      <span id="toggleAuthModeBtn">Sign up</span>
     </p>
 
     <div id="authLoader" class="loader hidden"></div>
 
-    <button class="close-btn" onclick="closeAuth()">Close</button>
+    <button class="close-btn" id="closeAuthBtn">Close</button>
 
   </div>
 </div>
 
 <!-- ================= PROFILE PAGE ================= -->
 <section id="profilePage" class="profile-page hidden">
-  <img id="profilePageAvatar" src="https://i.pravatar.cc/150" />
+  <img id="profilePageAvatar" src="https://i.pravatar.cc/150" alt="User avatar" />
   <h3 id="profilePageName">User</h3>
   <p id="profilePageEmail">email@example.com</p>
 
-  <button class="secondary-btn" onclick="closeProfilePage()">
+  <button class="secondary-btn" id="closeProfileBtn">
     Back
   </button>
 </section>
@@ -101,13 +111,13 @@
 <main id="gallery" class="gallery"></main>
 
 <!-- ================= LOADING ================= -->
-<div id="loading">Loading...</div>
+<div id="loading" class="loading hidden">Loading...</div>
 
 <!-- ================= FLOATING APP DOWNLOAD ================= -->
 <button
   id="appDownloadFloat"
   class="app-download-float"
-  aria-label="Download App"
+  aria-label="Download app"
 >
   ⬇️ Download App
 </button>
