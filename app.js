@@ -3,9 +3,12 @@
 *********************************/
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import {
+  import {
   getAuth,
   GoogleAuthProvider,
   signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signOut,
@@ -27,6 +30,18 @@ const firebaseConfig = {
 const fbApp = initializeApp(firebaseConfig);
 const auth = getAuth(fbApp);
 const db = getFirestore(fbApp);
+
+// ✅ ADD THIS HERE
+getRedirectResult(auth)
+  .then((result) => {
+    if (result?.user) {
+      console.log("LOGIN SUCCESS:", result.user);
+      showToast("Signed in successfully", "success");
+    }
+  })
+  .catch((error) => {
+    console.error("REDIRECT ERROR:", error);
+  });
 
 /*********************************
   GLOBAL STATE
@@ -763,14 +778,21 @@ authSubmitBtn?.addEventListener("click", async () => {
 googleBtn?.addEventListener("click", async () => {
   try {
     const provider = new GoogleAuthProvider();
-    await signInWithPopup(auth, provider);
+await signInWithRedirect(auth, provider);
+
     authModal.classList.add("hidden");
     showToast("Signed in with Google ✓", "success");
+
   } catch (err) {
-    showAuthError("Google sign-in failed");
+    console.error("GOOGLE AUTH ERROR:", err);
+
+    showAuthError(
+      err.message
+        .replace("Firebase: ", "")
+        .replace(/\(auth.*\)/, "")
+    );
   }
 });
-
 logoutBtn?.addEventListener("click", async () => {
   await signOut(auth);
   showToast("Logged out", "info");
