@@ -3,105 +3,97 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
-  <meta name="description" content="Faynx — Discover, save & download stunning HD wallpapers powered by Unsplash."/>
+  <meta name="description" content="Faynx — Discover, save & download millions of HD wallpapers."/>
   <meta name="theme-color" content="#0d0d0f"/>
-  <meta property="og:title" content="Faynx – Premium Wallpapers"/>
-  <meta property="og:description" content="Millions of free HD wallpapers, curated topics, instant download."/>
   <title>Faynx – HD Wallpapers</title>
-
-  <!-- PWA -->
   <link rel="manifest" href="/manifest.json"/>
   <link rel="apple-touch-icon" href="/icons/icon-192.png"/>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
   <link rel="icon" href="/icons/icon-192.png"/>
-
-  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Cal+Sans&family=Instrument+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet"/>
-
-  <!-- Unsplash preconnect -->
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet"/>
   <link rel="preconnect" href="https://api.unsplash.com"/>
   <link rel="preconnect" href="https://images.unsplash.com"/>
-
   <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
 
-<!-- ████ SPLASH SCREEN ████ -->
+<!-- ██ SPLASH ██ -->
 <div id="splash" class="splash">
   <div class="splash-logo">Fay<span>nx</span></div>
-  <div class="splash-bar"><div class="splash-progress" id="splashProgress"></div></div>
+  <div class="splash-track"><div id="splashBar" class="splash-bar"></div></div>
 </div>
 
-<!-- ████ HEADER ████ -->
+<!-- ██ INSTALL POPUP ██ -->
+<div id="installPopup" class="install-popup hidden">
+  <div class="install-inner">
+    <div class="install-icon">
+      <img src="/icons/icon-192.png" alt="Faynx" onerror="this.src='https://i.pravatar.cc/80?img=1'"/>
+    </div>
+    <div class="install-text">
+      <strong>Install Faynx App</strong>
+      <span>Add to your home screen for the best experience — offline support, instant load, no browser UI.</span>
+    </div>
+    <div class="install-actions">
+      <button id="installConfirmBtn" class="install-yes">Install</button>
+      <button id="installLaterBtn"  class="install-no">Not now</button>
+    </div>
+    <button id="installCloseBtn" class="install-x">✕</button>
+  </div>
+</div>
+
+<!-- ██ HEADER ██ -->
 <header class="header" id="header">
   <div class="header-inner">
+    <a class="logo" href="#" id="logoLink">Fay<span>nx</span></a>
 
-    <a class="logo" href="/" onclick="goHome(event)">Fay<span>nx</span></a>
-
-    <!-- Desktop search -->
     <div class="search-wrap" id="searchWrap">
       <div class="search-box" id="searchBox">
         <svg class="s-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7.5"/><path d="m20 20-4-4"/></svg>
         <input id="searchInput" type="search" placeholder="Search millions of wallpapers…" autocomplete="off" spellcheck="false"/>
-        <button class="s-clear hidden" id="searchClear">✕</button>
+        <button class="s-clear hidden" id="searchClear" type="button">✕</button>
       </div>
-      <!-- Live suggestions dropdown -->
       <div class="suggestions-drop hidden" id="suggestionsDrop"></div>
     </div>
 
-    <!-- Nav actions -->
     <nav class="header-nav">
-      <button class="nav-btn" id="mobileSearchBtn" aria-label="Search" title="Search">
+      <button class="nav-btn" id="mobileSearchBtn" type="button" aria-label="Search">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7.5"/><path d="m20 20-4-4"/></svg>
       </button>
-      <button class="nav-btn" id="notifBtn" aria-label="Notifications" title="Notifications">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-        <span class="notif-dot hidden" id="notifDot"></span>
-      </button>
-      <!-- Profile -->
       <div class="avatar-wrap">
-        <button class="avatar-btn" id="avatarBtn" aria-label="Account">
+        <button class="avatar-btn" id="avatarBtn" type="button" aria-label="Account">
           <img id="headerAvatar" src="https://i.pravatar.cc/80?img=32" alt="Avatar"/>
-          <span class="avatar-ring"></span>
         </button>
         <div class="account-menu hidden" id="accountMenu">
           <div class="menu-user hidden" id="menuUserInfo">
-            <img id="menuAvatar" src="https://i.pravatar.cc/80?img=32" alt=""/>
-            <div>
-              <strong id="menuName">User</strong>
-              <small id="menuEmail">—</small>
-            </div>
+            <img id="menuAvatar" src="" alt=""/>
+            <div><strong id="menuName">User</strong><small id="menuEmail"></small></div>
           </div>
-          <div class="menu-divider hidden" id="menuDivider1"></div>
-          <button class="menu-item" id="menuSignIn">
+          <div class="menu-divider hidden" id="menuDiv1"></div>
+          <button class="menu-item" id="menuSignIn" type="button">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
             Sign in / Sign up
           </button>
-          <button class="menu-item hidden" id="menuProfile">
+          <button class="menu-item hidden" id="menuProfile" type="button">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>
             My Profile
           </button>
-          <button class="menu-item" id="menuSaved">
+          <button class="menu-item" id="menuSaved" type="button">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-            Saved Wallpapers
+            Saved
           </button>
-          <button class="menu-item" id="menuCollections">
+          <button class="menu-item" id="menuCollections" type="button">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
             Collections
           </button>
-          <button class="menu-item" id="menuDownloads">
+          <button class="menu-item" id="menuDownloads" type="button">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
             Downloads
           </button>
           <div class="menu-divider"></div>
-          <button class="menu-item hidden" id="menuSettings">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-            Settings
-          </button>
-          <button class="menu-item danger hidden" id="menuSignOut">
+          <button class="menu-item danger hidden" id="menuSignOut" type="button">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
             Sign out
           </button>
@@ -110,7 +102,7 @@
     </nav>
   </div>
 
-  <!-- Mobile search bar -->
+  <!-- Mobile search -->
   <div id="mobileSearchBar" class="mobile-search-bar hidden">
     <div class="search-box">
       <svg class="s-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7.5"/><path d="m20 20-4-4"/></svg>
@@ -122,96 +114,82 @@
   <div class="topics-scroller"><div class="topics-track" id="topicsBar"></div></div>
 </header>
 
-<!-- ████ HERO BANNER ████ -->
+<!-- ██ HERO ██ -->
 <section class="hero-banner" id="heroBanner">
   <div class="hero-bg" id="heroBg"></div>
   <div class="hero-content">
-    <h1 class="hero-title">Millions of<br/><em>beautiful</em> wallpapers.</h1>
-    <p class="hero-sub">Free HD & 4K. Powered by Unsplash.</p>
+    <h1 class="hero-title">Millions of<br/><em>beautiful</em> walls.</h1>
+    <p class="hero-sub">Free HD &amp; 4K. Powered by Unsplash.</p>
     <div class="hero-search-row">
       <div class="hero-search-box">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7.5"/><path d="m20 20-4-4"/></svg>
-        <input id="heroSearchInput" type="search" placeholder="Try "neon city", "mountains", "abstract"…" autocomplete="off"/>
-        <button id="heroSearchBtn">Search</button>
+        <input id="heroSearchInput" type="search" placeholder='Try "neon city", "mountains", "abstract"…' autocomplete="off"/>
+        <button id="heroSearchBtn" type="button">Search</button>
       </div>
     </div>
     <div class="hero-tags" id="heroTags"></div>
   </div>
 </section>
 
-<!-- ████ MAIN GALLERY ████ -->
+<!-- ██ MAIN GALLERY ██ -->
 <main class="main" id="mainGallery">
   <div class="section-header">
     <h2 id="sectionTitle">Trending Wallpapers</h2>
     <div class="view-toggles">
-      <button class="view-btn active" id="viewMasonry" title="Masonry">
+      <button class="view-btn active" id="viewMasonry" type="button" title="Masonry">
         <svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="4" height="6" rx="1"/><rect x="10" y="3" width="4" height="4" rx="1"/><rect x="17" y="3" width="4" height="8" rx="1"/><rect x="3" y="12" width="4" height="9" rx="1"/><rect x="10" y="10" width="4" height="11" rx="1"/><rect x="17" y="14" width="4" height="7" rx="1"/></svg>
       </button>
-      <button class="view-btn" id="viewGrid" title="Grid">
+      <button class="view-btn" id="viewGrid" type="button" title="Grid">
         <svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
       </button>
     </div>
   </div>
   <div id="gallery" class="masonry-grid"></div>
-  <div id="loadSpinner" class="load-more hidden">
-    <div class="spinner"></div>
-    <span>Loading more…</span>
-  </div>
+  <div id="loadSpinner" class="load-more hidden"><div class="spinner"></div><span>Loading more…</span></div>
   <div id="endOfFeed" class="end-feed hidden">You've seen it all 🎉</div>
 </main>
 
-<!-- ████ SAVED PAGE ████ -->
+<!-- ██ SAVED PAGE ██ -->
 <div id="savedPage" class="fullpage hidden">
   <div class="fp-header">
-    <button class="fp-back" id="savedBack">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-    </button>
+    <button class="fp-back" id="savedBack" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></button>
     <h2>Saved <span id="savedCount" class="count-badge"></span></h2>
   </div>
   <div id="savedGrid" class="masonry-grid" style="padding:16px"></div>
 </div>
 
-<!-- ████ COLLECTIONS PAGE ████ -->
+<!-- ██ COLLECTIONS PAGE ██ -->
 <div id="collectionsPage" class="fullpage hidden">
   <div class="fp-header">
-    <button class="fp-back" id="collectionsBack">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-    </button>
-    <h2>My Collections</h2>
-    <button class="fp-action" id="newCollectionBtn">+ New</button>
+    <button class="fp-back" id="collectionsBack" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <h2>Collections</h2>
+    <button class="fp-action" id="newCollectionBtn" type="button">+ New</button>
   </div>
   <div id="collectionsGrid" class="collections-grid"></div>
 </div>
 
-<!-- ████ DOWNLOADS PAGE ████ -->
+<!-- ██ DOWNLOADS PAGE ██ -->
 <div id="downloadsPage" class="fullpage hidden">
   <div class="fp-header">
-    <button class="fp-back" id="downloadsBack">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-    </button>
+    <button class="fp-back" id="downloadsBack" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></button>
     <h2>Download History</h2>
-    <button class="fp-action danger" id="clearDownloadsBtn">Clear</button>
+    <button class="fp-action danger" id="clearDownloadsBtn" type="button">Clear</button>
   </div>
   <div id="downloadsList" class="downloads-list"></div>
 </div>
 
-<!-- ████ PROFILE PAGE ████ -->
+<!-- ██ PROFILE PAGE ██ -->
 <div id="profilePage" class="fullpage hidden">
   <div class="fp-header">
-    <button class="fp-back" id="profileBack">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-    </button>
+    <button class="fp-back" id="profileBack" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></button>
     <h2>My Account</h2>
   </div>
   <div class="profile-wrap">
-
-    <!-- User card -->
     <div class="profile-card">
-      <div class="profile-cover" id="profileCover"></div>
+      <div class="profile-cover"></div>
       <div class="profile-body-inner">
         <div class="profile-avatar-area">
           <img id="profileAvatar" src="https://i.pravatar.cc/150?img=32" alt="Avatar" class="profile-avatar"/>
-          <button class="avatar-edit-btn" id="avatarEditBtn" title="Change avatar">✏️</button>
         </div>
         <div class="profile-info">
           <h3 id="profileName">User</h3>
@@ -226,75 +204,55 @@
       </div>
     </div>
 
-    <!-- Edit display name -->
     <div class="settings-card">
       <h4>Display Name</h4>
       <div class="settings-row">
         <input id="displayNameInput" type="text" placeholder="Your name" autocomplete="off"/>
-        <button id="saveNameBtn" class="pill-btn">Save</button>
+        <button id="saveNameBtn" class="pill-btn" type="button">Save</button>
       </div>
     </div>
 
-    <!-- Premium -->
-    <div class="settings-card premium-card" id="premiumCard">
+    <div class="settings-card premium-card">
       <div class="premium-header">
-        <div>
-          <h4>⭐ Faynx Premium</h4>
-          <p>Unlock 4K downloads, no ads, exclusive collections</p>
-        </div>
-        <button class="upgrade-btn" id="upgradeBtn">Upgrade</button>
+        <div><h4>⭐ Faynx Premium</h4><p>Unlock 4K downloads &amp; exclusive collections</p></div>
+        <button class="upgrade-btn hidden" id="upgradeBtn" type="button">Upgrade</button>
       </div>
       <div class="redeem-row">
         <input id="redeemInput" type="text" placeholder="Have a code? e.g. FAYNX2024" autocomplete="off"/>
-        <button id="redeemBtn" class="pill-btn">Apply</button>
+        <button id="redeemBtn" class="pill-btn" type="button">Apply</button>
       </div>
     </div>
 
-    <!-- Preferences -->
     <div class="settings-card">
       <h4>Preferences</h4>
-      <div class="pref-row">
-        <span>Default download quality</span>
-        <select id="defaultQuality">
-          <option value="regular">HD (Regular)</option>
-          <option value="full">Full (4K)</option>
-          <option value="raw">RAW</option>
-        </select>
+      <div class="pref-row"><span>Default quality</span>
+        <select id="defaultQuality"><option value="regular">HD</option><option value="full">4K</option><option value="raw">RAW</option></select>
       </div>
-      <div class="pref-row">
-        <span>Default layout</span>
-        <select id="defaultLayout">
-          <option value="masonry">Masonry (Pinterest-style)</option>
-          <option value="grid">Uniform Grid</option>
-        </select>
+      <div class="pref-row"><span>Layout</span>
+        <select id="defaultLayout"><option value="masonry">Masonry</option><option value="grid">Grid</option></select>
       </div>
-      <div class="pref-row">
-        <span>Safe search</span>
+      <div class="pref-row"><span>Safe search</span>
         <label class="toggle-sw"><input type="checkbox" id="safeSearch" checked/><span></span></label>
       </div>
     </div>
 
-    <!-- Danger zone -->
     <div class="settings-card danger-card">
       <h4>Account</h4>
-      <button class="pill-btn danger" id="signOutBtn2">Sign out</button>
+      <button class="pill-btn danger" id="signOutBtn2" type="button">Sign out</button>
     </div>
-
   </div>
 </div>
 
-<!-- ████ AUTH MODAL ████ -->
-<div id="authModal" class="modal-overlay hidden">
+<!-- ██ AUTH MODAL ██ -->
+<div id="authModal" class="modal-overlay hidden" role="dialog" aria-modal="true">
   <div class="modal-box auth-modal-box">
-    <button class="modal-x" id="authClose">✕</button>
-
-    <!-- Tabs -->
+    <button class="modal-x" id="authClose" type="button">✕</button>
     <div class="auth-tabs">
-      <button class="auth-tab active" data-tab="signin">Sign In</button>
-      <button class="auth-tab" data-tab="signup">Sign Up</button>
+      <button class="auth-tab active" data-tab="signin" type="button">Sign In</button>
+      <button class="auth-tab" data-tab="signup" type="button">Sign Up</button>
     </div>
 
-    <!-- Sign In panel -->
+    <!-- Sign In -->
     <div class="auth-panel active" id="signinPanel">
       <div class="auth-logo">Fay<span>nx</span></div>
       <p class="auth-sub">Welcome back! Sign in to continue.</p>
@@ -303,25 +261,25 @@
       <label class="field-label">Password</label>
       <div class="pw-wrap">
         <input id="siPassword" type="password" placeholder="Password" autocomplete="current-password"/>
-        <button class="pw-toggle" data-target="siPassword">👁</button>
+        <button class="pw-toggle" type="button" data-target="siPassword">👁</button>
       </div>
       <div class="auth-row">
         <label class="check-label"><input type="checkbox" id="rememberMe"/> Remember me</label>
-        <button class="link-btn" id="forgotBtn">Forgot password?</button>
+        <button class="link-btn" id="forgotBtn" type="button">Forgot password?</button>
       </div>
       <p id="siError" class="auth-err hidden"></p>
-      <button id="siSubmit" class="btn-primary">Sign In</button>
+      <button id="siSubmit" class="btn-primary" type="button">Sign In</button>
       <div class="or-sep"><span>or</span></div>
-      <button id="siGoogle" class="btn-google">
+      <button id="siGoogle" class="btn-google" type="button">
         <svg width="18" height="18" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
         Continue with Google
       </button>
     </div>
 
-    <!-- Sign Up panel -->
+    <!-- Sign Up -->
     <div class="auth-panel" id="signupPanel">
       <div class="auth-logo">Fay<span>nx</span></div>
-      <p class="auth-sub">Create a free account to save & download.</p>
+      <p class="auth-sub">Create a free account to save &amp; download.</p>
       <label class="field-label">Full Name</label>
       <input id="suName" type="text" placeholder="Your name" autocomplete="name"/>
       <label class="field-label">Email</label>
@@ -329,214 +287,145 @@
       <label class="field-label">Password</label>
       <div class="pw-wrap">
         <input id="suPassword" type="password" placeholder="Min 6 characters" autocomplete="new-password"/>
-        <button class="pw-toggle" data-target="suPassword">👁</button>
+        <button class="pw-toggle" type="button" data-target="suPassword">👁</button>
       </div>
-      <div class="pw-strength" id="pwStrength"><div class="pw-bar" id="pwBar"></div></div>
+      <div class="pw-strength"><div class="pw-bar" id="pwBar"></div></div>
       <p class="pw-hint" id="pwHint"></p>
-      <label class="check-label"><input type="checkbox" id="agreeTerms"/> I agree to the <a href="#" class="link-btn">Terms</a></label>
+      <label class="check-label" style="margin:10px 0"><input type="checkbox" id="agreeTerms"/> I agree to the Terms of Service</label>
       <p id="suError" class="auth-err hidden"></p>
-      <button id="suSubmit" class="btn-primary">Create Account</button>
+      <button id="suSubmit" class="btn-primary" type="button">Create Account</button>
       <div class="or-sep"><span>or</span></div>
-      <button id="suGoogle" class="btn-google">
+      <button id="suGoogle" class="btn-google" type="button">
         <svg width="18" height="18" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
         Sign up with Google
       </button>
     </div>
-
   </div>
 </div>
 
-<!-- ████ LIGHTBOX ████ -->
-<div id="lightbox" class="lightbox hidden">
+<!-- ██ LIGHTBOX ██ -->
+<div id="lightbox" class="lightbox hidden" role="dialog" aria-modal="true">
   <div class="lb-backdrop" id="lbBackdrop"></div>
   <div class="lb-shell">
-
-    <!-- Image pane -->
     <div class="lb-img-pane">
       <div class="lb-img-wrap">
-        <img id="lbImg" class="lb-img" alt=""/>
+        <img id="lbImg" class="lb-img" alt="wallpaper"/>
         <div class="lb-shimmer" id="lbShimmer"></div>
       </div>
-      <button class="lb-nav prev" id="lbPrev" disabled>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-      </button>
-      <button class="lb-nav next" id="lbNext" disabled>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
-      </button>
+      <button class="lb-nav prev" id="lbPrev" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <button class="lb-nav next" id="lbNext" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></button>
       <div class="lb-counter" id="lbCounter"></div>
     </div>
-
-    <!-- Info pane -->
-    <div class="lb-info-pane" id="lbInfoPane">
-      <!-- Top row -->
+    <div class="lb-info-pane">
       <div class="lb-top-row">
         <div class="lb-author" id="lbAuthor">
           <img id="lbAuthorAv" src="" alt=""/>
-          <div>
-            <b id="lbAuthorName"></b>
-            <small id="lbAuthorHandle"></small>
-          </div>
+          <div><b id="lbAuthorName"></b><small id="lbAuthorHandle"></small></div>
         </div>
-        <button class="lb-x" id="lbClose">✕</button>
+        <button class="lb-x" id="lbClose" type="button">✕</button>
       </div>
-
-      <!-- Description -->
       <p class="lb-desc" id="lbDesc"></p>
-
-      <!-- Color palette -->
       <div class="lb-palette" id="lbPalette"></div>
-
-      <!-- Tags -->
       <div class="lb-tags" id="lbTags"></div>
-
-      <!-- Stats -->
       <div class="lb-stats" id="lbStats"></div>
-
-      <!-- Quality -->
       <div class="lb-quality">
         <span class="lb-sec-label">Quality</span>
         <div class="qpills" id="qpills">
-          <button class="qp active" data-q="regular">HD</button>
-          <button class="qp" data-q="full">4K</button>
-          <button class="qp" data-q="raw">RAW</button>
+          <button class="qp active" data-q="regular" type="button">HD</button>
+          <button class="qp" data-q="full" type="button">4K</button>
+          <button class="qp" data-q="raw" type="button">RAW</button>
         </div>
       </div>
-
-      <!-- Action buttons -->
       <div class="lb-actions">
-        <button class="lb-btn primary" id="lbDownload">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Download
+        <button class="lb-btn primary" id="lbDownload" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download
         </button>
-        <button class="lb-btn secondary" id="lbSave">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-          Save
+        <button class="lb-btn secondary" id="lbSave" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> Save
         </button>
-        <button class="lb-btn secondary" id="lbCopy">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          Copy
+        <button class="lb-btn secondary" id="lbCopy" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy
         </button>
-        <button class="lb-btn secondary" id="lbShare">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-          Share
+        <button class="lb-btn secondary" id="lbShare" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg> Share
         </button>
       </div>
-
-      <!-- Add to collection -->
-      <button class="add-to-coll-btn" id="lbAddToCollection">
+      <button class="add-to-coll-btn" id="lbAddToCollection" type="button">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         Add to Collection
       </button>
-
-      <!-- Attribution -->
-      <a class="lb-attribution" id="lbUnsplashLink" href="#" target="_blank" rel="noopener">
+      <a class="lb-attribution" id="lbUnsplashLink" href="#" target="_blank" rel="noopener noreferrer">
         Photo by <span id="lbAttribName"></span> on Unsplash ↗
       </a>
     </div>
   </div>
 </div>
 
-<!-- ████ COLLECTION PICKER MODAL ████ -->
+<!-- ██ COLLECTION PICKER ██ -->
 <div id="collPickerModal" class="modal-overlay hidden">
   <div class="modal-box coll-picker">
-    <button class="modal-x" id="collPickerClose">✕</button>
+    <button class="modal-x" id="collPickerClose" type="button">✕</button>
     <h3>Add to Collection</h3>
     <div id="collPickerList" class="coll-picker-list"></div>
-    <button class="btn-primary" id="collPickerNewBtn">+ Create new collection</button>
+    <button class="btn-primary" id="collPickerNewBtn" type="button" style="margin-top:4px">+ Create new collection</button>
   </div>
 </div>
 
-<!-- ████ NEW COLLECTION MODAL ████ -->
+<!-- ██ NEW COLLECTION MODAL ██ -->
 <div id="newCollModal" class="modal-overlay hidden">
   <div class="modal-box" style="max-width:380px">
-    <button class="modal-x" id="newCollClose">✕</button>
-    <h3>New Collection</h3>
+    <button class="modal-x" id="newCollClose" type="button">✕</button>
+    <h3 style="margin-bottom:16px">New Collection</h3>
     <label class="field-label">Name</label>
     <input id="newCollName" type="text" placeholder="e.g. Dark Aesthetic" autocomplete="off"/>
     <label class="field-label">Description (optional)</label>
     <input id="newCollDesc" type="text" placeholder="My collection of…" autocomplete="off"/>
-    <button class="btn-primary" id="newCollSave" style="margin-top:16px">Create</button>
+    <button class="btn-primary" id="newCollSave" type="button" style="margin-top:16px">Create</button>
   </div>
 </div>
 
-<!-- ████ TOAST CONTAINER ████ -->
+<!-- ██ TOAST CONTAINER ██ -->
 <div id="toastContainer" class="toast-container"></div>
 
-<!-- ████ BOTTOM NAV (mobile) ████ -->
+<!-- ██ BOTTOM NAV ██ -->
 <nav class="bottom-nav" id="bottomNav">
-  <button class="bnav-btn active" id="bnavHome" data-page="home">
+  <button class="bnav-btn active" id="bnavHome" type="button">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
     <span>Home</span>
   </button>
-  <button class="bnav-btn" id="bnavSearch" data-page="search">
+  <button class="bnav-btn" id="bnavSearch" type="button">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7.5"/><path d="m20 20-4-4"/></svg>
     <span>Search</span>
   </button>
-  <button class="bnav-btn" id="bnavSaved" data-page="saved">
+  <button class="bnav-btn" id="bnavSaved" type="button">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
     <span>Saved</span>
   </button>
-  <button class="bnav-btn" id="bnavProfile" data-page="profile">
+  <button class="bnav-btn" id="bnavProfile" type="button">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>
     <span>Profile</span>
   </button>
 </nav>
 
 <script>
-// ── Dropdown toggle ──
+/* ── Inline non-module scripts (run before app.js module) ── */
+
+// Dropdown
 const _ab = document.getElementById("avatarBtn");
 const _am = document.getElementById("accountMenu");
 _ab.onclick = e => { e.stopPropagation(); _am.classList.toggle("hidden"); };
-document.addEventListener("click", e => { if (!_ab.contains(e.target) && !_am.contains(e.target)) _am.classList.add("hidden"); });
+document.addEventListener("click", e => {
+  if (!_ab.contains(e.target) && !_am.contains(e.target)) _am.classList.add("hidden");
+});
 
-// ── Mobile search ──
+// Mobile search toggle
 document.getElementById("mobileSearchBtn").onclick = () => {
   const b = document.getElementById("mobileSearchBar");
   b.classList.toggle("hidden");
   if (!b.classList.contains("hidden")) document.getElementById("mobileSearchInput").focus();
 };
 
-// ── Password toggle ──
-document.addEventListener("click", e => {
-  if (e.target.classList.contains("pw-toggle")) {
-    const t = document.getElementById(e.target.dataset.target);
-    if (t) { t.type = t.type === "password" ? "text" : "password"; e.target.textContent = t.type === "password" ? "👁" : "🙈"; }
-  }
-});
-
-// ── Global home nav ──
-window.goHome = function(e) {
-  e && e.preventDefault();
-  document.querySelectorAll(".fullpage").forEach(p => p.classList.add("hidden"));
-  document.getElementById("mainGallery").style.display = "";
-  document.getElementById("heroBanner").style.display = "";
-};
-
-// ── Hero search ──
-document.getElementById("heroSearchBtn").onclick = () => {
-  const q = document.getElementById("heroSearchInput").value.trim();
-  if (q) {
-    document.getElementById("searchInput").value = q;
-    window._triggerSearch?.(q);
-    document.getElementById("heroBanner").style.display = "none";
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }
-};
-document.getElementById("heroSearchInput").addEventListener("keydown", e => {
-  if (e.key === "Enter") document.getElementById("heroSearchBtn").click();
-});
-
-// ── Search clear ──
-document.getElementById("searchInput").addEventListener("input", e => {
-  document.getElementById("searchClear").classList.toggle("hidden", !e.target.value);
-});
-document.getElementById("searchClear").onclick = () => {
-  document.getElementById("searchInput").value = "";
-  document.getElementById("searchClear").classList.add("hidden");
-  window._triggerSearch?.("");
-};
-
-// ── Auth tabs ──
+// Auth tabs
 document.querySelectorAll(".auth-tab").forEach(tab => {
   tab.onclick = () => {
     document.querySelectorAll(".auth-tab").forEach(t => t.classList.remove("active"));
@@ -546,18 +435,62 @@ document.querySelectorAll(".auth-tab").forEach(tab => {
   };
 });
 
-// ── Password strength ──
-document.getElementById("suPassword")?.addEventListener("input", e => {
-  const val = e.target.value;
+// Password toggle
+document.addEventListener("click", e => {
+  if (e.target.classList.contains("pw-toggle")) {
+    const t = document.getElementById(e.target.dataset.target);
+    if (t) { t.type = t.type === "password" ? "text" : "password"; e.target.textContent = t.type === "password" ? "👁" : "🙈"; }
+  }
+});
+
+// Password strength meter
+document.getElementById("suPassword").addEventListener("input", e => {
+  const v = e.target.value;
+  const s = [/[A-Z]/, /[0-9]/, /[^A-Za-z0-9]/, /.{8,}/].filter(r => r.test(v)).length;
   const bar = document.getElementById("pwBar");
   const hint = document.getElementById("pwHint");
-  const str = [/[A-Z]/, /[0-9]/, /[^A-Za-z0-9]/, /.{8,}/].filter(r => r.test(val)).length;
   const labels = ["", "Weak", "Fair", "Strong", "Very strong"];
   const colors = ["", "#e74c3c", "#f39c12", "#2ecc71", "#00b894"];
-  bar.style.width = (str * 25) + "%";
-  bar.style.background = colors[str] || "transparent";
-  hint.textContent = val ? labels[str] : "";
-  hint.style.color = colors[str];
+  bar.style.width = (s * 25) + "%";
+  bar.style.background = colors[s] || "transparent";
+  hint.textContent = v ? labels[s] : "";
+  hint.style.color = colors[s];
+});
+
+// Search clear button
+document.getElementById("searchInput").addEventListener("input", e => {
+  document.getElementById("searchClear").classList.toggle("hidden", !e.target.value);
+});
+document.getElementById("searchClear").onclick = () => {
+  document.getElementById("searchInput").value = "";
+  document.getElementById("searchClear").classList.add("hidden");
+  window._triggerSearch?.("");
+};
+
+// Logo click → go home
+document.getElementById("logoLink").onclick = e => {
+  e.preventDefault();
+  document.querySelectorAll(".fullpage").forEach(p => p.classList.add("hidden"));
+  document.getElementById("mainGallery").style.display = "";
+  document.getElementById("heroBanner").style.display = "";
+};
+
+// Hero search button
+document.getElementById("heroSearchBtn").onclick = () => {
+  const q = document.getElementById("heroSearchInput").value.trim();
+  if (!q) return;
+  document.getElementById("searchInput").value = q;
+  window._triggerSearch?.(q);
+  document.getElementById("heroBanner").style.display = "none";
+};
+document.getElementById("heroSearchInput").addEventListener("keydown", e => {
+  if (e.key === "Enter") document.getElementById("heroSearchBtn").click();
+});
+
+// Modals: click outside to close
+["authModal","collPickerModal","newCollModal"].forEach(id => {
+  const el = document.getElementById(id);
+  el.addEventListener("click", e => { if (e.target === el) el.classList.add("hidden"); });
 });
 </script>
 <script type="module" src="/app.js"></script>
