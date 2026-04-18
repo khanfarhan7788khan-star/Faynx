@@ -7,6 +7,7 @@
   <meta name="theme-color" content="#0d0d0f"/>
   <meta property="og:title" content="Faynx – Free HD & 4K Wallpapers"/>
   <meta property="og:description" content="Millions of free wallpapers. Dark, aesthetic, minimal, nature. Instant download. No watermarks."/>
+  <meta property="og:image" content="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80"/>
   <title>Faynx – Free HD & 4K Wallpapers</title>
   <link rel="manifest" href="/manifest.json"/>
   <link rel="apple-touch-icon" href="/icons/icon-192.png"/>
@@ -15,7 +16,7 @@
   <link rel="icon" href="/icons/icon-192.png"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;1,400;1,700&display=swap" rel="stylesheet"/>
   <link rel="preconnect" href="https://api.unsplash.com"/>
   <link rel="preconnect" href="https://images.unsplash.com"/>
   <link rel="stylesheet" href="style.css"/>
@@ -25,6 +26,7 @@
 <!-- ▓ SPLASH ▓ -->
 <div id="splash" class="splash">
   <div class="splash-logo">Fay<span>nx</span></div>
+  <p class="splash-tag">HD & 4K Wallpapers</p>
   <div class="splash-track"><div id="splashBar" class="splash-bar"></div></div>
 </div>
 
@@ -33,47 +35,44 @@
   <div class="ib-left">
     <img class="ib-icon" src="/icons/icon-192.png" alt="Faynx" onerror="this.style.display='none'"/>
     <div class="ib-text">
-      <strong>Install Faynx</strong>
-      <span>Add to home screen — offline, instant, no browser UI</span>
+      <strong>Install Faynx App</strong>
+      <span>Offline-ready · No browser UI · Instant launch</span>
     </div>
   </div>
   <div class="ib-right">
     <button id="installYesBtn" class="ib-yes">Install</button>
-    <button id="installNoBtn"  class="ib-no">✕</button>
+    <button id="installNoBtn" class="ib-no">✕</button>
   </div>
 </div>
 
 <!-- ▓ HEADER ▓ -->
 <header class="header" id="siteHeader">
   <div class="header-inner">
-    <!-- Logo -->
     <button class="logo" id="logoBtn" type="button">Fay<span>nx</span></button>
 
-    <!-- Desktop search -->
     <div class="search-wrap">
       <div class="search-box" id="desktopSearchBox">
         <svg class="s-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-        <input id="searchInput" type="search" placeholder="Search wallpapers…" autocomplete="off" spellcheck="false"/>
-        <button class="s-clear" id="searchClear" type="button" aria-label="Clear search">✕</button>
+        <input id="searchInput" type="search" placeholder="Search wallpapers, styles, moods…" autocomplete="off" spellcheck="false"/>
+        <button class="s-clear" id="searchClear" type="button" aria-label="Clear">✕</button>
       </div>
       <div class="sugg-drop" id="suggDrop"></div>
     </div>
 
-    <!-- Right actions -->
     <div class="header-actions">
       <button class="icon-btn" id="mobileSearchBtn" type="button" aria-label="Search">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
       </button>
-      <button class="icon-btn" id="themeBtn" type="button" aria-label="Toggle theme" title="Toggle theme">
+      <button class="icon-btn" id="themeBtn" type="button" aria-label="Toggle theme">
         <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
       </button>
+
       <!-- Avatar + dropdown -->
       <div class="avatar-wrap" id="avatarWrap">
         <button class="avatar-btn" id="avatarBtn" type="button" aria-label="Account" aria-expanded="false">
           <img id="headerAvatar" src="https://ui-avatars.com/api/?name=U&background=1c1c21&color=888&size=80" alt="Avatar"/>
         </button>
-        <div class="account-menu" id="accountMenu" role="menu" aria-hidden="true">
-          <!-- Logged in user info -->
+        <div class="account-menu" id="accountMenu" role="menu">
           <div class="menu-user-info" id="menuUserInfo" style="display:none">
             <img id="menuAvatar" src="" alt=""/>
             <div class="menu-user-text">
@@ -82,8 +81,6 @@
             </div>
           </div>
           <div class="menu-sep" id="menuSep1" style="display:none"></div>
-
-          <!-- Items always visible -->
           <button class="menu-item" id="menuSignIn" type="button" role="menuitem">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
             Sign in / Sign up
@@ -100,8 +97,6 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
             Download History
           </button>
-
-          <!-- Logged-in only -->
           <div class="menu-sep" id="menuSep2" style="display:none"></div>
           <button class="menu-item" id="menuProfile" type="button" role="menuitem" style="display:none">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>
@@ -116,7 +111,7 @@
     </div>
   </div>
 
-  <!-- Mobile search bar -->
+  <!-- Mobile search -->
   <div id="mobileSearch" class="mobile-search" style="display:none">
     <div class="search-box">
       <svg class="s-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
@@ -124,7 +119,7 @@
     </div>
   </div>
 
-  <!-- Topics / category bar -->
+  <!-- Topics bar -->
   <div class="topics-wrap"><div class="topics-track" id="topicsBar"></div></div>
 </header>
 
@@ -133,27 +128,22 @@
   <div class="hero-bg" id="heroBg"></div>
   <div class="hero-overlay"></div>
   <div class="hero-body">
-    <h1 class="hero-h1">Free HD &amp; 4K<br/><em>Wallpapers</em> for Every Screen</h1>
-    <p class="hero-sub">Dark aesthetic, lo-fi, nature, minimal &amp; more. No watermarks. Instant download.</p>
+    <div class="hero-badge">✦ Curated daily from Unsplash</div>
+    <h1 class="hero-h1">Discover Beautiful<br/><em>Wallpapers</em> for Every Screen</h1>
+    <p class="hero-sub">Millions of free HD & 4K photos. No watermarks. Instant download.</p>
     <div class="hero-search-pill">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
       <input id="heroSearch" type="search" placeholder='Try "dark forest", "neon city", "minimal"…' autocomplete="off"/>
       <button id="heroSearchBtn" type="button">Search</button>
     </div>
     <div class="hero-chips" id="heroChips"></div>
-  </div>
-
-  <!-- 🔥 SEO CATEGORY LINKS -->
-<section class="seo-categories" style="padding:40px 20px;text-align:center">
-  <h2>Browse Wallpapers by Category</h2>
-
-  <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:20px">
-    <a href="/category/nature.html">Nature Wallpapers</a>
-    <a href="/category/anime.html">Anime Wallpapers</a>
-    <a href="/category/cars.html">Car Wallpapers</a>
-    <a href="/category/space.html">Space Wallpapers</a>
-    <a href="/category/minimal.html">Minimal Wallpapers</a>
-    <a href="/category/aesthetic.html">Aesthetic Wallpapers</a>
+    <div class="hero-stats">
+      <span><strong>10M+</strong> Photos</span>
+      <span class="dot">·</span>
+      <span><strong>Free</strong> Downloads</span>
+      <span class="dot">·</span>
+      <span><strong>4K</strong> Quality</span>
+    </div>
   </div>
 </section>
 
@@ -162,10 +152,10 @@
   <div class="gallery-header">
     <h2 id="galleryTitle">Trending Wallpapers</h2>
     <div class="layout-btns">
-      <button class="layout-btn active" id="btnMasonry" type="button" title="Masonry layout">
+      <button class="layout-btn active" id="btnMasonry" type="button" title="Masonry">
         <svg viewBox="0 0 20 20" fill="currentColor"><rect x="1" y="1" width="5" height="8" rx="1"/><rect x="8" y="1" width="5" height="5" rx="1"/><rect x="15" y="1" width="5" height="11" rx="1"/><rect x="1" y="11" width="5" height="9" rx="1"/><rect x="8" y="8" width="5" height="12" rx="1"/><rect x="15" y="14" width="5" height="6" rx="1"/></svg>
       </button>
-      <button class="layout-btn" id="btnGrid" type="button" title="Grid layout">
+      <button class="layout-btn" id="btnGrid" type="button" title="Grid">
         <svg viewBox="0 0 20 20" fill="currentColor"><rect x="1" y="1" width="8" height="8" rx="1"/><rect x="11" y="1" width="8" height="8" rx="1"/><rect x="1" y="11" width="8" height="8" rx="1"/><rect x="11" y="11" width="8" height="8" rx="1"/></svg>
       </button>
     </div>
@@ -174,43 +164,43 @@
   <div id="gallerySpinner" class="gallery-spinner hidden">
     <div class="spin-ring"></div><span>Loading more…</span>
   </div>
-  <p id="galleryEnd" class="gallery-end hidden">You've reached the end ✨</p>
+  <p id="galleryEnd" class="gallery-end hidden">You've seen everything ✦</p>
 </main>
 
-<!-- 🔥 SEO CONTENT -->
-<section class="seo-content" style="padding:40px 20px;max-width:900px;margin:auto">
-  <h2>Free HD & 4K Wallpapers for Mobile & Desktop</h2>
-
-  <p>
-    Explore thousands of high-quality HD and 4K wallpapers for all devices. 
-    Discover categories like nature, anime, cars, minimal, and aesthetic wallpapers.
-  </p>
-
-  <p>
-    Faynx provides free wallpapers with no watermark. Browse trending and popular backgrounds updated daily.
-  </p>
+<!-- ▓ SEO CONTENT ▓ -->
+<section class="seo-content">
+  <h2>Free HD & 4K Wallpapers</h2>
+  <p>Explore thousands of high-quality wallpapers for mobile, desktop, and tablet. Browse nature, anime, cars, space, minimal, and aesthetic styles — all free, no watermarks.</p>
+  <div class="seo-links">
+    <a href="/category/nature.html">🌿 Nature</a>
+    <a href="/category/anime.html">🎌 Anime</a>
+    <a href="/category/cars.html">🚗 Cars</a>
+    <a href="/category/space.html">🌌 Space</a>
+    <a href="/category/minimal.html">◻ Minimal</a>
+    <a href="/category/aesthetic.html">✨ Aesthetic</a>
+  </div>
 </section>
 
 <!-- ▓ SAVED PAGE ▓ -->
 <div id="savedPage" class="page-overlay" style="display:none">
   <div class="page-topbar">
-    <button class="page-back" id="savedClose" type="button" aria-label="Back">
+    <button class="page-back" id="savedClose" type="button">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
     </button>
     <h2>Saved <span id="savedBadge" class="badge-count"></span></h2>
-    <button class="page-action" id="savedClearBtn" type="button">Clear all</button>
+    <button class="page-action danger" id="savedClearBtn" type="button">Clear all</button>
   </div>
   <div id="savedGrid" class="gallery-masonry" style="padding:14px"></div>
   <p id="savedEmpty" class="page-empty" style="display:none">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="48"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-    <br/>No saved wallpapers yet.<br/><small>Tap Save on any wallpaper to keep it here.</small>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="52" height="52"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+    <br/>No saved wallpapers yet.<br/><small>Tap ♥ Save on any wallpaper.</small>
   </p>
 </div>
 
 <!-- ▓ COLLECTIONS PAGE ▓ -->
 <div id="collectionsPage" class="page-overlay" style="display:none">
   <div class="page-topbar">
-    <button class="page-back" id="collectionsClose" type="button" aria-label="Back">
+    <button class="page-back" id="collectionsClose" type="button">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
     </button>
     <h2>My Collections</h2>
@@ -218,7 +208,7 @@
   </div>
   <div id="collectionsGrid" class="collections-grid"></div>
   <p id="collectionsEmpty" class="page-empty" style="display:none">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="48"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="52" height="52"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
     <br/>No collections yet.<br/><small>Create one to organise your wallpapers.</small>
   </p>
 </div>
@@ -226,7 +216,7 @@
 <!-- ▓ DOWNLOADS PAGE ▓ -->
 <div id="downloadsPage" class="page-overlay" style="display:none">
   <div class="page-topbar">
-    <button class="page-back" id="downloadsClose" type="button" aria-label="Back">
+    <button class="page-back" id="downloadsClose" type="button">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
     </button>
     <h2>Download History</h2>
@@ -234,7 +224,7 @@
   </div>
   <div id="downloadsList" class="downloads-list"></div>
   <p id="downloadsEmpty" class="page-empty" style="display:none">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="48"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="52" height="52"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
     <br/>No downloads yet.<br/><small>Your download history will appear here.</small>
   </p>
 </div>
@@ -242,13 +232,12 @@
 <!-- ▓ PROFILE PAGE ▓ -->
 <div id="profilePage" class="page-overlay" style="display:none">
   <div class="page-topbar">
-    <button class="page-back" id="profileClose" type="button" aria-label="Back">
+    <button class="page-back" id="profileClose" type="button">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
     </button>
     <h2>My Account</h2>
   </div>
   <div class="profile-scroll">
-    <!-- Profile card -->
     <div class="profile-card">
       <div class="profile-cover-art"></div>
       <div class="profile-info-row">
@@ -266,7 +255,6 @@
       </div>
     </div>
 
-    <!-- Edit name -->
     <div class="settings-block">
       <label class="settings-label">Display Name</label>
       <div class="settings-row">
@@ -275,12 +263,11 @@
       </div>
     </div>
 
-    <!-- Premium -->
     <div class="settings-block premium-block">
       <div class="premium-row">
         <div>
           <p class="settings-label">⭐ Faynx Premium</p>
-          <p class="settings-hint">Unlock 4K, RAW downloads &amp; exclusive collections</p>
+          <p class="settings-hint">Unlock 4K, RAW downloads & exclusive collections</p>
         </div>
         <button id="upgradeBtn" class="btn-gold" type="button">Upgrade</button>
       </div>
@@ -290,23 +277,15 @@
       </div>
     </div>
 
-    <!-- Preferences -->
     <div class="settings-block">
       <p class="settings-label">Preferences</p>
       <div class="pref-item">
         <span>Default quality</span>
-        <select id="prefQuality">
-          <option value="regular">HD</option>
-          <option value="full">4K</option>
-          <option value="raw">RAW</option>
-        </select>
+        <select id="prefQuality"><option value="regular">HD</option><option value="full">4K</option><option value="raw">RAW</option></select>
       </div>
       <div class="pref-item">
         <span>Default layout</span>
-        <select id="prefLayout">
-          <option value="masonry">Masonry</option>
-          <option value="grid">Grid</option>
-        </select>
+        <select id="prefLayout"><option value="masonry">Masonry</option><option value="grid">Grid</option></select>
       </div>
       <div class="pref-item">
         <span>Safe search</span>
@@ -314,7 +293,6 @@
       </div>
     </div>
 
-    <!-- Sign out -->
     <div class="settings-block">
       <button id="signOutBtn" class="btn-danger full-w" type="button">Sign out</button>
     </div>
@@ -322,16 +300,15 @@
 </div>
 
 <!-- ▓ AUTH MODAL ▓ -->
-<div id="authModal" class="modal-overlay" style="display:none" role="dialog" aria-modal="true" aria-label="Sign in">
+<div id="authModal" class="modal-overlay" style="display:none" role="dialog" aria-modal="true">
   <div class="modal-card auth-card">
-    <button class="modal-close" id="authClose" type="button" aria-label="Close">✕</button>
-    <!-- Tab row -->
+    <button class="modal-close" id="authClose" type="button">✕</button>
     <div class="auth-tabs" role="tablist">
       <button class="atab active" id="tabSignIn" data-panel="panelSignIn" type="button" role="tab">Sign In</button>
       <button class="atab" id="tabSignUp" data-panel="panelSignUp" type="button" role="tab">Sign Up</button>
     </div>
 
-    <!-- Sign In panel -->
+    <!-- Sign In -->
     <div id="panelSignIn" class="auth-panel" role="tabpanel">
       <p class="auth-logo">Fay<span>nx</span></p>
       <p class="auth-sub">Welcome back!</p>
@@ -339,8 +316,8 @@
       <input id="siEmail" type="email" placeholder="you@example.com" autocomplete="email"/>
       <label class="field-lbl">Password</label>
       <div class="pw-field">
-        <input id="siPass" type="password" placeholder="Password" autocomplete="current-password"/>
-        <button class="pw-eye" type="button" data-for="siPass" aria-label="Show password">👁</button>
+        <input id="siPass" type="password" placeholder="Your password" autocomplete="current-password"/>
+        <button class="pw-eye" type="button" data-for="siPass">👁</button>
       </div>
       <div class="auth-row-sm">
         <label class="chk-label"><input type="checkbox" id="siRemember"/> Remember me</label>
@@ -355,7 +332,7 @@
       </button>
     </div>
 
-    <!-- Sign Up panel -->
+    <!-- Sign Up -->
     <div id="panelSignUp" class="auth-panel" style="display:none" role="tabpanel">
       <p class="auth-logo">Fay<span>nx</span></p>
       <p class="auth-sub">Create your free account</p>
@@ -366,7 +343,7 @@
       <label class="field-lbl">Password</label>
       <div class="pw-field">
         <input id="suPass" type="password" placeholder="Min 6 characters" autocomplete="new-password"/>
-        <button class="pw-eye" type="button" data-for="suPass" aria-label="Show password">👁</button>
+        <button class="pw-eye" type="button" data-for="suPass">👁</button>
       </div>
       <div class="pw-meter"><div id="pwMeterBar"></div></div>
       <p id="pwMeterLabel" class="pw-label"></p>
@@ -386,7 +363,6 @@
 <div id="lightbox" class="lightbox" style="display:none" role="dialog" aria-modal="true">
   <div class="lb-bg" id="lbBg"></div>
   <div class="lb-wrap">
-    <!-- Image side -->
     <div class="lb-img-side">
       <img id="lbImg" class="lb-img" alt="wallpaper"/>
       <div class="lb-loader" id="lbLoader"></div>
@@ -398,31 +374,18 @@
       </button>
       <div class="lb-counter" id="lbCounter"></div>
     </div>
-    <!-- Info side -->
     <div class="lb-info-side" id="lbInfoSide">
       <div class="lb-info-header">
         <div class="lb-author">
           <img id="lbAuthorAv" src="" alt=""/>
-          <div>
-            <b id="lbAuthorName"></b>
-            <small id="lbAuthorHandle"></small>
-          </div>
+          <div><b id="lbAuthorName"></b><small id="lbAuthorHandle"></small></div>
         </div>
-        <button class="lb-close-btn" id="lbClose" type="button" aria-label="Close">✕</button>
+        <button class="lb-close-btn" id="lbClose" type="button">✕</button>
       </div>
-
       <p id="lbDesc" class="lb-desc"></p>
-
-      <!-- Color swatches -->
       <div class="lb-swatches" id="lbSwatches"></div>
-
-      <!-- Tags -->
       <div class="lb-tags" id="lbTags"></div>
-
-      <!-- Stats -->
       <div class="lb-stats" id="lbStats"></div>
-
-      <!-- Quality selector -->
       <div class="lb-quality-row">
         <span class="lb-section-label">Quality</span>
         <div class="quality-pills" id="qualityPills">
@@ -431,8 +394,6 @@
           <button class="qpill" data-q="raw" type="button">RAW</button>
         </div>
       </div>
-
-      <!-- Action buttons -->
       <div class="lb-actions">
         <button class="lbtn lbtn-primary" id="lbDownload" type="button">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
@@ -451,17 +412,11 @@
           Share
         </button>
       </div>
-
-      <!-- Add to collection -->
       <button class="lb-coll-btn" id="lbAddToCollection" type="button">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         Add to Collection
       </button>
-
-      <!-- Attribution -->
-      <a class="lb-credit" id="lbCredit" href="#" target="_blank" rel="noopener noreferrer">
-        Photo by <span id="lbCreditName"></span> on Unsplash ↗
-      </a>
+      <a class="lb-credit" id="lbCredit" href="#" target="_blank" rel="noopener">Photo by <span id="lbCreditName"></span> on Unsplash ↗</a>
     </div>
   </div>
 </div>
@@ -476,7 +431,7 @@
   </div>
 </div>
 
-<!-- ▓ NEW COLLECTION MODAL ▓ -->
+<!-- ▓ NEW COLLECTION ▓ -->
 <div id="newCollOverlay" class="modal-overlay" style="display:none" role="dialog">
   <div class="modal-card" style="max-width:360px">
     <button class="modal-close" id="newCollClose" type="button">✕</button>
@@ -492,8 +447,8 @@
 <!-- ▓ TOAST ▓ -->
 <div id="toastStack" class="toast-stack" aria-live="polite"></div>
 
-<!-- ▓ BOTTOM NAV (mobile) ▓ -->
-<nav class="bottom-nav" id="bottomNav" aria-label="Main navigation">
+<!-- ▓ BOTTOM NAV ▓ -->
+<nav class="bottom-nav" id="bottomNav">
   <button class="bnav active" id="bHome" type="button">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
     <span>Home</span>
@@ -512,17 +467,23 @@
   </button>
 </nav>
 
-<script type="module" src="/app.js"></script>
-
-<!-- 🔥 SEO FOOTER LINKS -->
-<footer style="padding:30px;text-align:center">
-  <h3>Popular Categories</h3>
-
-  <a href="/category/nature.html">Nature</a> |
-  <a href="/category/anime.html">Anime</a> |
-  <a href="/category/cars.html">Cars</a> |
-  <a href="/category/space.html">Space</a> |
-  <a href="/category/minimal.html">Minimal</a>
+<!-- ▓ FOOTER ▓ -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-logo">Fay<span>nx</span></div>
+    <p class="footer-desc">Free HD & 4K wallpapers for every screen. Powered by Unsplash.</p>
+    <div class="footer-links">
+      <a href="/category/nature.html">Nature</a>
+      <a href="/category/anime.html">Anime</a>
+      <a href="/category/cars.html">Cars</a>
+      <a href="/category/space.html">Space</a>
+      <a href="/category/minimal.html">Minimal</a>
+      <a href="/category/aesthetic.html">Aesthetic</a>
+    </div>
+    <p class="footer-copy">© 2025 Faynx · Photos from Unsplash</p>
+  </div>
 </footer>
+
+<script type="module" src="/app.js"></script>
 </body>
 </html>
