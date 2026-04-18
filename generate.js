@@ -2,7 +2,6 @@ const fs = require("fs");
 
 const baseUrl = "https://faynx.tech";
 
-// Keywords
 const keywords = [
   "dark forest",
   "anime sky",
@@ -16,21 +15,19 @@ const keywords = [
   "sunset aesthetic"
 ];
 
-// Slug function
 const slugify = (text) =>
   text.toLowerCase().replace(/\s+/g, "-");
 
-// Store all pages
 let allSlugs = [];
 
-// ✅ STEP 1 — Generate slugs
+// STEP 1
 for (let i = 1; i <= 1000; i++) {
   const keyword = keywords[i % keywords.length];
   const slug = `${slugify(keyword)}-${i}`;
   allSlugs.push({ slug, keyword });
 }
 
-// ✅ STEP 2 — Generate wallpaper pages
+// STEP 2 — WALLPAPER PAGES
 allSlugs.forEach((item, index) => {
   const { slug, keyword } = item;
 
@@ -41,33 +38,73 @@ allSlugs.forEach((item, index) => {
   const relatedLinks = related
     .map(
       (r) =>
-        `<a href="/wallpaper/${r.slug}.html">${r.keyword} wallpaper</a>`
+        `<li><a href="/wallpaper/${r.slug}.html">${r.keyword} wallpaper</a></li>`
     )
-    .join("<br>");
+    .join("");
 
   const html = `
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>${keyword} Wallpaper HD & 4K Free Download</title>
+  <meta charset="UTF-8">
+  <title>${keyword} Wallpaper HD & 4K</title>
   <meta name="description" content="Download ${keyword} wallpaper in HD & 4K quality.">
   <link rel="canonical" href="${baseUrl}/wallpaper/${slug}.html">
+
+  <!-- 🔥 ADD YOUR MAIN CSS -->
+  <link rel="stylesheet" href="../style.css">
+
+  <style>
+    body { font-family: Arial; background:#0b0b0f; color:#fff; margin:0 }
+    .container { max-width:900px; margin:auto; padding:20px }
+    img { width:100%; border-radius:12px }
+    a { color:#4fd1ff }
+  </style>
 </head>
 
 <body>
-  <h1>${keyword} Wallpaper HD</h1>
 
-  <img src="https://source.unsplash.com/random/1920x1080/?${encodeURIComponent(
-    keyword
-  )}" alt="${keyword} wallpaper">
+<header style="padding:15px;border-bottom:1px solid #222">
+  <a href="/" style="color:#fff;text-decoration:none;font-weight:bold">
+    Faynx
+  </a>
+</header>
 
-  <p>Download ${keyword} wallpaper in HD and 4K resolution.</p>
+<main class="container">
+
+  <h1>${keyword} Wallpaper HD & 4K</h1>
+
+  <p>
+    Download high-quality ${keyword} wallpaper in HD and 4K resolution 
+    for mobile, desktop, and tablet.
+  </p>
+
+  <img 
+    src="https://source.unsplash.com/random/1920x1080/?${encodeURIComponent(keyword)}" 
+    alt="${keyword} wallpaper hd 4k"
+  >
+
+  <h2>Download ${keyword} Wallpaper</h2>
+  <p>Click image to view full resolution.</p>
+
+  <!-- 🔥 CATEGORY LINK (IMPORTANT FOR SEO) -->
+  <p>
+    Explore more: 
+    <a href="/category/${keyword.split(" ")[0]}.html">
+      ${keyword.split(" ")[0]} wallpapers
+    </a>
+  </p>
 
   <h2>Related Wallpapers</h2>
-  ${relatedLinks}
+  <ul>
+    ${relatedLinks}
+  </ul>
 
-  <br><br>
+  <br>
   <a href="/">← Back to Home</a>
+
+</main>
+
 </body>
 </html>
 `;
@@ -75,8 +112,8 @@ allSlugs.forEach((item, index) => {
   fs.writeFileSync(`wallpaper/${slug}.html`, html);
 });
 
-// ✅ STEP 3 — Generate category pages (NOW allSlugs exists)
 
+// STEP 3 — CATEGORY PAGES
 const categories = [
   "nature",
   "anime",
@@ -95,29 +132,56 @@ categories.forEach((cat) => {
     .slice(0, 50)
     .map(
       (w) =>
-        `<a href="/wallpaper/${w.slug}.html">${w.keyword} wallpaper</a>`
+        `<li><a href="/wallpaper/${w.slug}.html">${w.keyword} wallpaper</a></li>`
     )
-    .join("<br>");
+    .join("");
 
   const html = `
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
   <title>${cat} Wallpapers HD & 4K</title>
   <meta name="description" content="Download ${cat} wallpapers in HD & 4K quality.">
   <link rel="canonical" href="${baseUrl}/category/${cat}.html">
+
+  <link rel="stylesheet" href="../style.css">
+
+  <style>
+    body { font-family: Arial; background:#0b0b0f; color:#fff; margin:0 }
+    .container { max-width:900px; margin:auto; padding:20px }
+    a { color:#4fd1ff }
+  </style>
 </head>
 
 <body>
-  <h1>${cat} Wallpapers</h1>
 
-  <p>Explore ${cat} wallpapers in HD and 4K resolution.</p>
+<header style="padding:15px;border-bottom:1px solid #222">
+  <a href="/" style="color:#fff;text-decoration:none;font-weight:bold">
+    Faynx
+  </a>
+</header>
+
+<main class="container">
+
+  <h1>${cat} Wallpapers HD & 4K</h1>
+
+  <p>
+    Browse the best ${cat} wallpapers in HD and 4K resolution.
+    Free download for all devices.
+  </p>
 
   <h2>Top ${cat} Wallpapers</h2>
-  ${links}
 
-  <br><br>
+  <ul>
+    ${links}
+  </ul>
+
+  <br>
   <a href="/">← Back to Home</a>
+
+</main>
+
 </body>
 </html>
 `;
@@ -125,17 +189,15 @@ categories.forEach((cat) => {
   fs.writeFileSync(`category/${cat}.html`, html);
 });
 
-// ✅ STEP 4 — Generate sitemap
 
+// STEP 4 — SITEMAP
 let sitemapUrls = [];
 
-// Homepage
 sitemapUrls.push(`
 <url>
   <loc>${baseUrl}/</loc>
 </url>`);
 
-// Wallpaper pages
 allSlugs.forEach((item) => {
   sitemapUrls.push(`
 <url>
@@ -143,7 +205,6 @@ allSlugs.forEach((item) => {
 </url>`);
 });
 
-// Category pages
 categories.forEach((cat) => {
   sitemapUrls.push(`
 <url>
@@ -158,4 +219,4 @@ ${sitemapUrls.join("\n")}
 
 fs.writeFileSync("sitemap.xml", sitemap);
 
-console.log("✅ Everything generated: pages + categories + sitemap");
+console.log("✅ Pages now styled + SEO optimized");
