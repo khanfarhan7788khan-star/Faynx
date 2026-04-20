@@ -1,6 +1,8 @@
 User-agent: *
 Allow: /
+
+# Block CDN internals
 Disallow: /cdn-cgi/
 
+# Sitemap
 Sitemap: https://faynx.tech/sitemap.xml
-Host: https://faynx.tech
