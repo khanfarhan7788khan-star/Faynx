@@ -1,15 +1,29 @@
 {
-  "name": "Faynx - HD Wallpapers",
+  "name": "Faynx — HD & 4K Wallpapers",
   "short_name": "Faynx",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#080810",
-  "theme_color": "#7c5cbf",
-  "orientation": "portrait",
-  "description": "Discover, save & download millions of free HD & 4K wallpapers.",
+  "background_color": "#06060a",
+  "theme_color": "#c9a96e",
+  "orientation": "portrait-primary",
+  "description": "Free HD & 4K wallpapers — nature, anime, cars, space, minimal, aesthetic. No watermarks, instant download.",
+  "categories": ["photography", "lifestyle", "utilities"],
+  "lang": "en",
+  "dir": "ltr",
   "icons": [
     { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
     { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
-  ]
+  ],
+  "screenshots": [
+    { "src": "/screenshots/home.png", "sizes": "1280x720", "type": "image/png", "form_factor": "wide" },
+    { "src": "/screenshots/mobile.png", "sizes": "390x844", "type": "image/png", "form_factor": "narrow" }
+  ],
+  "shortcuts": [
+    { "name": "Nature Wallpapers",    "url": "/category/nature.html",    "description": "Browse nature wallpapers" },
+    { "name": "Space Wallpapers",     "url": "/category/space.html",     "description": "Browse space wallpapers" },
+    { "name": "Aesthetic Wallpapers", "url": "/category/aesthetic.html", "description": "Browse aesthetic wallpapers" }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
 }

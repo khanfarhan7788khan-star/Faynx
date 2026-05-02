@@ -7,71 +7,73 @@
   <meta name="description" content="Learn about Faynx — a free HD and 4K wallpaper site with 1000+ curated backgrounds for desktop and mobile. No watermarks, no sign-up, instant download."/>
   <link rel="canonical" href="https://faynx.tech/about.html"/>
   <meta property="og:title" content="About Faynx — Free HD & 4K Wallpapers"/>
-  <meta property="og:description" content="Faynx is a free wallpaper site with 1000+ HD & 4K backgrounds. No watermarks, no account needed."/>
   <meta property="og:url" content="https://faynx.tech/about.html"/>
   <link rel="icon" href="/icons/icon-192.png"/>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;1,400;1,700&display=swap" rel="stylesheet"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="/style.css"/>
   <script type="application/ld+json">
   {
-    "@context": "https://schema.org",
-    "@type": "AboutPage",
-    "name": "About Faynx — Free HD & 4K Wallpapers",
-    "url": "https://faynx.tech/about.html",
-    "description": "Faynx is a free wallpaper site with 1000+ HD and 4K backgrounds for desktop and mobile.",
-    "isPartOf": { "@type": "WebSite", "url": "https://faynx.tech", "name": "Faynx" },
-    "breadcrumb": {
-      "@type": "BreadcrumbList",
-      "itemListElement": [
-        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://faynx.tech/" },
-        { "@type": "ListItem", "position": 2, "name": "About", "item": "https://faynx.tech/about.html" }
-      ]
-    }
+    "@context":"https://schema.org",
+    "@type":"AboutPage",
+    "name":"About Faynx — Free HD & 4K Wallpapers",
+    "url":"https://faynx.tech/about.html",
+    "isPartOf":{"@type":"WebSite","url":"https://faynx.tech","name":"Faynx"},
+    "breadcrumb":{"@type":"BreadcrumbList","itemListElement":[
+      {"@type":"ListItem","position":1,"name":"Home","item":"https://faynx.tech/"},
+      {"@type":"ListItem","position":2,"name":"About","item":"https://faynx.tech/about.html"}
+    ]}
   }
   </script>
   <style>
-    body { padding-bottom: 0; }
-    .page-wrap { max-width:800px; margin:0 auto; padding:48px 24px 80px; }
-    .page-title { font-family:'Playfair Display',serif; font-size:clamp(28px,5vw,44px); font-weight:700; margin-bottom:16px; }
-    .page-lead { font-size:17px; color:var(--text2); line-height:1.75; margin-bottom:32px; }
-    h2 { font-family:'Playfair Display',serif; font-size:22px; font-weight:700; margin:36px 0 14px; color:var(--text); }
-    p { font-size:15px; color:var(--text2); line-height:1.8; margin-bottom:14px; }
-    ul { padding-left:20px; margin-bottom:14px; }
-    li { font-size:15px; color:var(--text2); line-height:1.8; margin-bottom:6px; }
-    a.inline { color:var(--accent2); }
-    a.inline:hover { color:var(--accent); }
-    .stat-row { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin:28px 0; }
-    .stat-box { background:var(--bg2); border:1px solid var(--border); border-radius:var(--r-lg); padding:20px; text-align:center; }
-    .stat-box strong { display:block; font-size:28px; font-weight:800; background:linear-gradient(135deg,var(--accent2),var(--accent)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-    .stat-box span { font-size:12px; color:var(--text2); text-transform:uppercase; letter-spacing:.07em; }
-    .trust-row { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin:24px 0; }
-    .trust-item { background:var(--bg2); border:1px solid var(--border); border-radius:var(--r-lg); padding:16px 18px; }
-    .trust-item h3 { font-size:14px; font-weight:700; margin-bottom:6px; }
-    .trust-item p { font-size:13px; color:var(--text3); margin:0; line-height:1.6; }
-    @media(max-width:480px){ .stat-row,.trust-row{grid-template-columns:1fr;} }
+    body { padding-bottom:0; }
+    .grain { position:fixed; inset:0; z-index:1; pointer-events:none; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E"); opacity:.55; mix-blend-mode:overlay; }
 
-    /* Inline header for static pages */
-    .static-header { background:rgba(8,8,16,.95); backdrop-filter:blur(20px); border-bottom:1px solid var(--border); padding:0 24px; position:sticky; top:0; z-index:100; }
-    .static-header .hi { max-width:1200px; margin:0 auto; display:flex; align-items:center; gap:20px; height:60px; }
-    .static-header .logo { font-family:'Playfair Display',serif; font-size:22px; font-style:italic; font-weight:800; background:linear-gradient(135deg,var(--accent2),var(--accent)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-    .static-header nav { display:flex; gap:18px; margin-left:auto; }
-    .static-header nav a { font-size:13px; color:var(--text2); font-weight:500; transition:color .15s; }
-    .static-header nav a:hover { color:var(--text); }
-    .static-header .cta { padding:7px 16px; border-radius:999px; background:var(--accent); color:#fff; font-size:13px; font-weight:700; transition:opacity .15s; }
-    .static-header .cta:hover { opacity:.85; }
-    .breadcrumb { padding:14px 0; font-size:12px; color:var(--text2); display:flex; gap:6px; align-items:center; flex-wrap:wrap; }
-    .breadcrumb a { color:var(--text2); }
-    .breadcrumb a:hover { color:var(--accent2); }
-    .breadcrumb span { color:var(--text3); }
-    @media(max-width:680px){ .static-header nav { display:none; } }
+    /* Page layout */
+    .about-wrap { max-width:760px; margin:0 auto; padding:56px 24px 100px; }
+
+    /* Page title block */
+    .page-eyebrow { font-size:10px; color:var(--gold); letter-spacing:.22em; text-transform:uppercase; margin-bottom:12px; font-family:'DM Sans',sans-serif; display:flex; align-items:center; gap:8px; }
+    .page-eyebrow::before { content:''; width:24px; height:1px; background:var(--gold); flex-shrink:0; }
+    .page-title { font-family:'Cormorant Garamond',serif; font-size:clamp(36px,6vw,64px); font-weight:300; line-height:1.05; color:var(--snow); margin-bottom:8px; }
+    .page-title em { font-style:italic; color:var(--gold); }
+    .page-lead { font-size:16px; color:var(--mist); line-height:1.8; margin-bottom:48px; max-width:600px; border-left:2px solid var(--gold); padding-left:18px; font-weight:300; }
+
+    /* Stats row */
+    .stat-row { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; margin:0 0 56px; background:var(--rule); border:1px solid var(--rule); border-radius:var(--r-lg); overflow:hidden; }
+    .stat-box { background:var(--ink2); padding:24px 20px; text-align:center; }
+    .stat-num { font-family:'Cormorant Garamond',serif; font-size:44px; font-weight:600; color:var(--gold); display:block; line-height:1; margin-bottom:6px; }
+    .stat-lbl { font-size:10px; color:var(--mist); text-transform:uppercase; letter-spacing:.14em; font-family:'DM Sans',sans-serif; }
+
+    /* Section headings */
+    .about-h2 { font-family:'Cormorant Garamond',serif; font-size:28px; font-weight:400; font-style:italic; color:var(--snow); margin:48px 0 16px; display:flex; align-items:center; gap:12px; }
+    .about-h2::after { content:''; flex:1; height:1px; background:var(--rule); }
+    p { font-size:14px; color:var(--mist); line-height:1.85; margin-bottom:14px; font-family:'DM Sans',sans-serif; font-weight:300; }
+    ul { list-style:none; padding:0; margin-bottom:14px; }
+    li { font-size:14px; color:var(--mist); line-height:1.85; margin-bottom:8px; font-family:'DM Sans',sans-serif; font-weight:300; display:flex; align-items:flex-start; gap:10px; }
+    li::before { content:'—'; color:var(--gold); flex-shrink:0; margin-top:1px; }
+    a.inline-link { color:var(--gold); transition:color .12s; }
+    a.inline-link:hover { color:var(--gold2); }
+
+    /* Trust grid */
+    .trust-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin:24px 0; }
+    .trust-card { background:var(--ink2); border:1px solid var(--rule); border-radius:var(--r-lg); padding:20px; transition:border-color .2s; }
+    .trust-card:hover { border-color:var(--gold); }
+    .trust-card-icon { font-size:20px; margin-bottom:10px; display:block; }
+    .trust-card h3 { font-size:13px; font-weight:500; color:var(--snow); margin-bottom:6px; font-family:'DM Sans',sans-serif; }
+    .trust-card p { font-size:12px; color:var(--mist); margin:0; line-height:1.65; }
+
+    @media(max-width:560px){ .stat-row{grid-template-columns:1fr;} .trust-grid{grid-template-columns:1fr;} .page-title{font-size:36px;} }
   </style>
 </head>
 <body>
+<div class="grain" aria-hidden="true"></div>
 
 <header class="static-header" role="banner">
   <div class="hi">
-    <a href="/" class="logo">Faynx</a>
-    <nav aria-label="Site navigation">
+    <a href="/" class="logo">FAYNX</a>
+    <nav aria-label="Navigation">
       <a href="/category/nature.html">Nature</a>
       <a href="/category/anime.html">Anime</a>
       <a href="/category/cars.html">Cars</a>
@@ -83,89 +85,91 @@
   </div>
 </header>
 
-<div class="page-wrap">
+<div class="about-wrap">
   <nav class="breadcrumb" aria-label="Breadcrumb">
-    <a href="/">Home</a> <span>›</span> <span>About</span>
+    <a href="/">Home</a><span>›</span><span>About</span>
   </nav>
 
-  <h1 class="page-title">About Faynx</h1>
-  <p class="page-lead">Faynx is a free HD and 4K wallpaper website designed to make it easy to find and download beautiful, high-quality backgrounds for any device — desktop, phone, or tablet.</p>
+  <p class="page-eyebrow">Our Story</p>
+  <h1 class="page-title">About <em>Faynx</em></h1>
+  <p class="page-lead">A free HD and 4K wallpaper platform built around one principle: beautiful imagery should be available to everyone, without friction, watermarks, or accounts.</p>
 
-  <div class="stat-row">
-    <div class="stat-box"><strong>1,000+</strong><span>Wallpapers</span></div>
-    <div class="stat-box"><strong>6</strong><span>Categories</span></div>
-    <div class="stat-box"><strong>4K</strong><span>Max Quality</span></div>
+  <div class="stat-row" aria-label="Key statistics">
+    <div class="stat-box"><strong class="stat-num">1,000+</strong><span class="stat-lbl">Wallpapers</span></div>
+    <div class="stat-box"><strong class="stat-num">6</strong><span class="stat-lbl">Categories</span></div>
+    <div class="stat-box"><strong class="stat-num">4K</strong><span class="stat-lbl">Max Quality</span></div>
   </div>
 
-  <h2>Our Mission</h2>
-  <p>We believe everyone deserves a beautiful digital environment. Faynx was built to be the cleanest, fastest, and most comprehensive free wallpaper resource on the web — with no ads cluttering the experience, no watermarks on downloads, and no account required.</p>
-  <p>We curate our collection across six major categories: <a href="/category/nature.html" class="inline">Nature</a>, <a href="/category/anime.html" class="inline">Anime</a>, <a href="/category/cars.html" class="inline">Cars</a>, <a href="/category/space.html" class="inline">Space</a>, <a href="/category/minimal.html" class="inline">Minimal</a>, and <a href="/category/aesthetic.html" class="inline">Aesthetic</a> — covering the most-searched wallpaper styles globally.</p>
+  <h2 class="about-h2">Our Mission</h2>
+  <p>We believe everyone deserves a beautiful digital environment. Faynx was built to be the cleanest, fastest, and most honest free wallpaper resource on the web — no ads cluttering the experience, no watermarks on downloads, no account required.</p>
+  <p>We curate our collection across six carefully chosen categories: <a href="/category/nature.html" class="inline-link">Nature</a>, <a href="/category/anime.html" class="inline-link">Anime</a>, <a href="/category/cars.html" class="inline-link">Cars</a>, <a href="/category/space.html" class="inline-link">Space</a>, <a href="/category/minimal.html" class="inline-link">Minimal</a>, and <a href="/category/aesthetic.html" class="inline-link">Aesthetic</a> — covering the most-searched wallpaper styles globally.</p>
 
-  <h2>Image Quality &amp; Sources</h2>
-  <p>All images on Faynx are sourced from Unsplash, one of the world's largest repositories of freely-licensed photography. Unsplash images are contributed by talented photographers and are available under the <a href="https://unsplash.com/license" target="_blank" rel="noopener" class="inline">Unsplash License</a>, which permits free use for personal and commercial purposes.</p>
-  <p>Every wallpaper is available in multiple resolutions — Full HD (1920×1080), 2K (2560×1440), 4K UHD (3840×2160), and mobile-optimised portrait formats for iPhone and Android devices. All downloads are free with no watermarks.</p>
+  <h2 class="about-h2">Image Quality &amp; Sources</h2>
+  <p>Every image on Faynx is sourced from <a href="https://unsplash.com?utm_source=faynx&utm_medium=referral" target="_blank" rel="noopener" class="inline-link">Unsplash</a>, one of the world's largest repositories of freely-licensed photography. Images are contributed by talented photographers worldwide and available under the <a href="https://unsplash.com/license" target="_blank" rel="noopener" class="inline-link">Unsplash License</a>, which permits free use for personal and commercial purposes.</p>
+  <p>Every wallpaper is served in multiple resolutions — Full HD (1920×1080), 2K (2560×1440), 4K UHD (3840×2160), and mobile-optimised portrait formats for iPhone and Android — delivered in WebP format for the fastest possible load times with no compromise on quality.</p>
 
-  <h2>What We Offer</h2>
+  <h2 class="about-h2">What We Offer</h2>
   <ul>
-    <li>1,000+ curated wallpapers across 6 categories</li>
+    <li>1,000+ curated wallpapers across 6 premium categories</li>
     <li>Multiple download resolutions: HD, 2K, 4K, Mobile Portrait</li>
-    <li>Zero watermarks on all downloads</li>
-    <li>No account or sign-up required</li>
-    <li>Fast loading with lazy-loaded, optimised images</li>
-    <li>PWA support — install as an app, use offline</li>
-    <li>Free to use for personal and commercial purposes (Unsplash License)</li>
+    <li>Zero watermarks on all downloads — what you see is what you get</li>
+    <li>No account or sign-up required to browse or download</li>
+    <li>Optimised WebP delivery for fastest load times</li>
+    <li>PWA support — install as an app, access saved wallpapers offline</li>
+    <li>Free to use for personal and commercial purposes</li>
   </ul>
 
-  <h2>Why Trust Faynx?</h2>
-  <div class="trust-row">
-    <div class="trust-item"><h3>🔒 No Sign-Up Required</h3><p>Browse and download without creating an account. Your privacy matters.</p></div>
-    <div class="trust-item"><h3>🖼 No Watermarks</h3><p>Every download is the full, clean image. What you see is what you get.</p></div>
-    <div class="trust-item"><h3>⚡ Instant Download</h3><p>Click to download. No waiting screens, no redirects, no ads.</p></div>
-    <div class="trust-item"><h3>📱 Every Device</h3><p>Optimised sizes for desktop, tablet, iPhone, and Android.</p></div>
+  <h2 class="about-h2">Why Trust Faynx</h2>
+  <div class="trust-grid">
+    <div class="trust-card"><span class="trust-card-icon">◎</span><h3>No Sign-Up Required</h3><p>Browse and download without creating an account. Your privacy is non-negotiable.</p></div>
+    <div class="trust-card"><span class="trust-card-icon">◈</span><h3>No Watermarks</h3><p>Every download is the full, clean image. Always.</p></div>
+    <div class="trust-card"><span class="trust-card-icon">◇</span><h3>Instant Download</h3><p>Click to download. No waiting screens, no redirects, no ads.</p></div>
+    <div class="trust-card"><span class="trust-card-icon">◉</span><h3>Every Device</h3><p>Optimised resolutions for desktop, tablet, iPhone, and Android.</p></div>
   </div>
 
-  <h2>Contact Us</h2>
-  <p>Have a suggestion, found a broken image, or want to report a copyright issue? Visit our <a href="/contact.html" class="inline">contact page</a> to get in touch. We typically respond within 48 hours.</p>
+  <h2 class="about-h2">Contact</h2>
+  <p>Found a broken image, want to suggest a category, or need to report a copyright concern? Visit our <a href="/contact.html" class="inline-link">contact page</a>. We respond within 48 hours.</p>
 </div>
 
 <footer class="site-footer" role="contentinfo">
   <div class="footer-inner">
-    <div class="footer-grid">
-      <div>
-        <a href="/" class="footer-logo">Faynx</a>
-        <p class="footer-desc">Free HD &amp; 4K wallpapers for every screen. Curated daily, no watermarks, instant download.</p>
+    <div class="footer-top">
+      <div class="footer-brand">
+        <span class="footer-wordmark">FAYNX</span>
+        <p>Free HD &amp; 4K wallpapers. Curated daily, no watermarks, instant download.</p>
       </div>
-      <div class="footer-col">
-        <h4>Categories</h4>
-        <a href="/category/nature.html">Nature Wallpapers</a>
-        <a href="/category/anime.html">Anime Wallpapers</a>
-        <a href="/category/cars.html">Car Wallpapers</a>
-        <a href="/category/space.html">Space Wallpapers</a>
-        <a href="/category/minimal.html">Minimal Wallpapers</a>
-        <a href="/category/aesthetic.html">Aesthetic Wallpapers</a>
-      </div>
-      <div class="footer-col">
-        <h4>Popular</h4>
-        <a href="/category/nature.html">Dark Forest</a>
-        <a href="/category/space.html">Galaxy 4K</a>
-        <a href="/category/aesthetic.html">Neon City</a>
-        <a href="/category/minimal.html">AMOLED Black</a>
-        <a href="/category/anime.html">Anime Sky</a>
-      </div>
-      <div class="footer-col">
-        <h4>Faynx</h4>
-        <a href="/about.html">About Us</a>
-        <a href="/contact.html">Contact</a>
-        <a href="/privacy-policy.html">Privacy Policy</a>
-        <a href="/sitemap.xml">Sitemap</a>
+      <div class="footer-links">
+        <div class="footer-col">
+          <h4>Categories</h4>
+          <a href="/category/nature.html">Nature</a>
+          <a href="/category/anime.html">Anime</a>
+          <a href="/category/cars.html">Cars</a>
+          <a href="/category/space.html">Space</a>
+          <a href="/category/minimal.html">Minimal</a>
+          <a href="/category/aesthetic.html">Aesthetic</a>
+        </div>
+        <div class="footer-col">
+          <h4>Popular</h4>
+          <a href="/category/nature.html">Dark Forest</a>
+          <a href="/category/space.html">Galaxy 4K</a>
+          <a href="/category/aesthetic.html">Neon City</a>
+          <a href="/category/minimal.html">AMOLED Black</a>
+          <a href="/category/anime.html">Anime Sky</a>
+        </div>
+        <div class="footer-col">
+          <h4>Faynx</h4>
+          <a href="/about.html">About</a>
+          <a href="/contact.html">Contact</a>
+          <a href="/privacy-policy.html">Privacy</a>
+          <a href="/sitemap.xml">Sitemap</a>
+        </div>
       </div>
     </div>
     <div class="footer-bottom">
-      <span>© 2025 Faynx · Photos from <a href="https://unsplash.com" target="_blank" rel="noopener">Unsplash</a></span>
-      <span><a href="/privacy-policy.html">Privacy</a> · <a href="/contact.html">Contact</a> · <a href="/sitemap.xml">Sitemap</a></span>
+      <span>© 2025 Faynx · Photos via <a href="https://unsplash.com?utm_source=faynx&utm_medium=referral" target="_blank" rel="noopener">Unsplash</a></span>
+      <span><a href="/privacy-policy.html">Privacy</a> · <a href="/contact.html">Contact</a></span>
     </div>
   </div>
 </footer>
-
 </body>
 </html>

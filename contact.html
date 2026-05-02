@@ -4,72 +4,85 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Contact Faynx — Get in Touch</title>
-  <meta name="description" content="Contact the Faynx team. Report broken images, suggest wallpaper categories, ask about copyright, or send us a general enquiry."/>
+  <meta name="description" content="Contact the Faynx team. Report broken images, suggest wallpaper categories, ask about copyright, or send a general enquiry."/>
   <link rel="canonical" href="https://faynx.tech/contact.html"/>
   <link rel="icon" href="/icons/icon-192.png"/>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;1,400;1,700&display=swap" rel="stylesheet"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="/style.css"/>
   <script type="application/ld+json">
   {
-    "@context": "https://schema.org",
-    "@type": "ContactPage",
-    "name": "Contact Faynx",
-    "url": "https://faynx.tech/contact.html",
-    "description": "Contact the Faynx team for support, copyright issues, or general enquiries.",
-    "isPartOf": { "@type": "WebSite", "url": "https://faynx.tech", "name": "Faynx" },
-    "breadcrumb": {
-      "@type": "BreadcrumbList",
-      "itemListElement": [
-        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://faynx.tech/" },
-        { "@type": "ListItem", "position": 2, "name": "Contact", "item": "https://faynx.tech/contact.html" }
-      ]
-    }
+    "@context":"https://schema.org","@type":"ContactPage",
+    "name":"Contact Faynx","url":"https://faynx.tech/contact.html",
+    "isPartOf":{"@type":"WebSite","url":"https://faynx.tech","name":"Faynx"},
+    "breadcrumb":{"@type":"BreadcrumbList","itemListElement":[
+      {"@type":"ListItem","position":1,"name":"Home","item":"https://faynx.tech/"},
+      {"@type":"ListItem","position":2,"name":"Contact","item":"https://faynx.tech/contact.html"}
+    ]}
   }
   </script>
   <style>
     body { padding-bottom:0; }
-    .page-wrap { max-width:680px; margin:0 auto; padding:48px 24px 80px; }
-    .page-title { font-family:'Playfair Display',serif; font-size:clamp(26px,4vw,40px); font-weight:700; margin-bottom:12px; }
-    p { font-size:15px; color:var(--text2); line-height:1.8; margin-bottom:16px; }
-    .contact-form { background:var(--bg2); border:1px solid var(--border); border-radius:var(--r-lg); padding:28px; margin-top:24px; }
-    .form-group { margin-bottom:18px; }
-    label { display:block; font-size:11px; font-weight:700; color:var(--text2); text-transform:uppercase; letter-spacing:.07em; margin-bottom:6px; }
-    input[type=text],input[type=email],textarea,select {
-      width:100%; padding:11px 14px; background:var(--bg3); border:1px solid var(--border);
-      border-radius:var(--r); color:var(--text); font-size:14px; font-family:inherit;
-      transition:border-color .15s,box-shadow .15s;
-    }
-    input:focus,textarea:focus,select:focus { border-color:var(--accent); outline:none; box-shadow:0 0 0 3px rgba(124,92,191,.15); }
-    textarea { height:130px; resize:vertical; }
-    select { appearance:auto; }
-    .submit-btn { width:100%; padding:13px; background:var(--accent); color:#fff; border:none; border-radius:999px; font-size:15px; font-weight:700; cursor:pointer; transition:opacity .15s,transform .15s; margin-top:4px; }
-    .submit-btn:hover { opacity:.88; transform:translateY(-1px); }
-    .contact-methods { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:28px; }
-    .contact-method { background:var(--bg2); border:1px solid var(--border); border-radius:var(--r-lg); padding:16px; }
-    .contact-method h3 { font-size:13px; font-weight:700; margin-bottom:5px; }
-    .contact-method p { font-size:12px; color:var(--text2); margin:0; line-height:1.6; }
-    .form-notice { font-size:12px; color:var(--text3); text-align:center; margin-top:12px; }
-    .form-notice a { color:var(--accent2); }
+    .grain { position:fixed; inset:0; z-index:1; pointer-events:none; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E"); opacity:.55; mix-blend-mode:overlay; }
 
-    .static-header { background:rgba(8,8,16,.95); backdrop-filter:blur(20px); border-bottom:1px solid var(--border); padding:0 24px; position:sticky; top:0; z-index:100; }
-    .static-header .hi { max-width:1200px; margin:0 auto; display:flex; align-items:center; gap:20px; height:60px; }
-    .static-header .logo { font-family:'Playfair Display',serif; font-size:22px; font-style:italic; font-weight:800; background:linear-gradient(135deg,var(--accent2),var(--accent)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-    .static-header nav { display:flex; gap:18px; margin-left:auto; }
-    .static-header nav a { font-size:13px; color:var(--text2); font-weight:500; transition:color .15s; }
-    .static-header nav a:hover { color:var(--text); }
-    .static-header .cta { padding:7px 16px; border-radius:999px; background:var(--accent); color:#fff; font-size:13px; font-weight:700; }
-    .breadcrumb { padding:14px 0; font-size:12px; color:var(--text2); display:flex; gap:6px; align-items:center; }
-    .breadcrumb a { color:var(--text2); }
-    .breadcrumb a:hover { color:var(--accent2); }
-    .breadcrumb span { color:var(--text3); }
-    @media(max-width:680px){ .static-header nav{display:none;} .contact-methods{grid-template-columns:1fr;} }
+    .contact-wrap { max-width:680px; margin:0 auto; padding:56px 24px 100px; }
+    .page-eyebrow { font-size:10px; color:var(--gold); letter-spacing:.22em; text-transform:uppercase; margin-bottom:12px; font-family:'DM Sans',sans-serif; display:flex; align-items:center; gap:8px; }
+    .page-eyebrow::before { content:''; width:24px; height:1px; background:var(--gold); flex-shrink:0; }
+    .page-title { font-family:'Cormorant Garamond',serif; font-size:clamp(36px,6vw,60px); font-weight:300; line-height:1.05; color:var(--snow); margin-bottom:8px; }
+    .page-title em { font-style:italic; color:var(--gold); }
+    .page-lead { font-size:14px; color:var(--mist); line-height:1.85; margin-bottom:40px; font-family:'DM Sans',sans-serif; font-weight:300; }
+
+    /* Form card */
+    .contact-form-card { background:var(--ink2); border:1px solid var(--rule); border-radius:var(--r-xl); padding:32px; margin-bottom:28px; }
+    .form-row { margin-bottom:20px; }
+    .form-label { display:block; font-size:10px; font-weight:500; color:var(--mist); text-transform:uppercase; letter-spacing:.12em; margin-bottom:7px; font-family:'DM Sans',sans-serif; }
+    .form-input, .form-select, .form-textarea {
+      width:100%; padding:11px 14px; border-radius:var(--r);
+      border:1px solid var(--rule); background:var(--ghost);
+      color:var(--snow); font-size:13px; font-family:'DM Sans',sans-serif;
+      transition:border-color .15s, box-shadow .15s;
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus { border-color:var(--gold); outline:none; box-shadow:0 0 0 3px var(--gold-glow); }
+    .form-input::placeholder, .form-textarea::placeholder { color:var(--fog); }
+    .form-textarea { height:140px; resize:vertical; }
+    .form-select { appearance:auto; cursor:pointer; }
+    .form-select option { background:var(--ink3); }
+    .submit-btn {
+      width:100%; padding:14px;
+      background:var(--gold); color:var(--ink);
+      border:none; border-radius:999px;
+      font-size:13px; font-weight:600;
+      font-family:'DM Sans',sans-serif;
+      letter-spacing:.06em; text-transform:uppercase;
+      cursor:pointer; transition:background .15s, transform .15s;
+      margin-top:6px;
+    }
+    .submit-btn:hover { background:var(--gold2); transform:translateY(-1px); }
+    .form-notice { font-size:11px; color:var(--fog); text-align:center; margin-top:12px; font-family:'DM Sans',sans-serif; }
+    .form-notice a { color:var(--gold); }
+    .form-success { display:none; text-align:center; padding:32px 0; }
+    .form-success .success-icon { font-size:36px; margin-bottom:12px; }
+    .form-success h3 { font-family:'Cormorant Garamond',serif; font-size:24px; font-weight:400; color:var(--snow); margin-bottom:8px; }
+    .form-success p { font-size:13px; color:var(--mist); font-family:'DM Sans',sans-serif; }
+
+    /* Contact methods */
+    .contact-methods { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .method-card { background:var(--ink2); border:1px solid var(--rule); border-radius:var(--r-lg); padding:18px; transition:border-color .2s; }
+    .method-card:hover { border-color:var(--gold); }
+    .method-label { font-size:10px; font-weight:500; color:var(--gold); text-transform:uppercase; letter-spacing:.12em; margin-bottom:6px; font-family:'DM Sans',sans-serif; }
+    .method-card h3 { font-size:13px; font-weight:400; color:var(--snow); margin-bottom:4px; font-family:'DM Sans',sans-serif; }
+    .method-card p { font-size:12px; color:var(--mist); margin:0; line-height:1.6; font-family:'DM Sans',sans-serif; }
+
+    @media(max-width:520px){ .contact-methods{grid-template-columns:1fr;} .page-title{font-size:34px;} }
   </style>
 </head>
 <body>
+<div class="grain" aria-hidden="true"></div>
 
-<header class="static-header">
+<header class="static-header" role="banner">
   <div class="hi">
-    <a href="/" class="logo">Faynx</a>
+    <a href="/" class="logo">FAYNX</a>
     <nav>
       <a href="/category/nature.html">Nature</a>
       <a href="/category/anime.html">Anime</a>
@@ -82,99 +95,120 @@
   </div>
 </header>
 
-<div class="page-wrap">
-  <nav class="breadcrumb"><a href="/">Home</a> <span>›</span> <span>Contact</span></nav>
-  <h1 class="page-title">Contact Us</h1>
-  <p>We'd love to hear from you. Whether you've found a broken image, want to suggest a new wallpaper category, have a partnership enquiry, or need to report a copyright concern — use the form below and we'll get back to you within 48 hours.</p>
+<div class="contact-wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="/">Home</a><span>›</span><span>Contact</span>
+  </nav>
 
-  <div class="contact-form">
-    <div class="form-group">
-      <label for="contact-name">Your Name</label>
-      <input type="text" id="contact-name" name="name" placeholder="Jane Smith" autocomplete="name"/>
+  <p class="page-eyebrow">Get in Touch</p>
+  <h1 class="page-title">Contact <em>Us</em></h1>
+  <p class="page-lead">Found a broken image, want to suggest a new category, have a partnership enquiry, or need to report a copyright concern? We respond within 48 hours.</p>
+
+  <div class="contact-form-card">
+    <div id="formFields">
+      <div class="form-row">
+        <label class="form-label" for="cName">Your Name</label>
+        <input class="form-input" type="text" id="cName" placeholder="Jane Smith" autocomplete="name"/>
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="cEmail">Email Address</label>
+        <input class="form-input" type="email" id="cEmail" placeholder="jane@example.com" autocomplete="email"/>
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="cSubject">Subject</label>
+        <select class="form-select" id="cSubject">
+          <option value="">— Select a subject —</option>
+          <option>General Enquiry</option>
+          <option>Report Broken Image</option>
+          <option>Suggest Wallpaper Category</option>
+          <option>Copyright / DMCA Notice</option>
+          <option>Partnership / Collaboration</option>
+          <option>Technical Issue</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="cMessage">Message</label>
+        <textarea class="form-textarea" id="cMessage" placeholder="Tell us how we can help…"></textarea>
+      </div>
+      <button class="submit-btn" id="submitBtn" type="button">Send Message</button>
+      <p class="form-notice">By submitting you agree to our <a href="/privacy-policy.html">Privacy Policy</a>.</p>
     </div>
-    <div class="form-group">
-      <label for="contact-email">Email Address</label>
-      <input type="email" id="contact-email" name="email" placeholder="jane@example.com" autocomplete="email"/>
+    <div class="form-success" id="formSuccess">
+      <div class="success-icon">◈</div>
+      <h3>Message Sent</h3>
+      <p>Thank you — we'll get back to you within 48 hours.</p>
     </div>
-    <div class="form-group">
-      <label for="contact-subject">Subject</label>
-      <select id="contact-subject" name="subject">
-        <option value="">— Select a subject —</option>
-        <option>General Enquiry</option>
-        <option>Report Broken Image</option>
-        <option>Suggest Wallpaper Category</option>
-        <option>Copyright / DMCA Notice</option>
-        <option>Partnership / Collaboration</option>
-        <option>Technical Issue</option>
-        <option>Other</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label for="contact-message">Message</label>
-      <textarea id="contact-message" name="message" placeholder="Tell us how we can help…"></textarea>
-    </div>
-    <button type="submit" class="submit-btn">Send Message</button>
-    <p class="form-notice">By submitting this form you agree to our <a href="/privacy-policy.html">Privacy Policy</a>.</p>
   </div>
 
   <div class="contact-methods">
-    <div class="contact-method">
-      <h3>📧 General Email</h3>
-      <p>hello@faynx.tech<br/>We reply within 48 hours.</p>
+    <div class="method-card">
+      <p class="method-label">General</p>
+      <h3>hello@faynx.tech</h3>
+      <p>Reply within 48 hours.</p>
     </div>
-    <div class="contact-method">
-      <h3>🛡 Copyright / DMCA</h3>
-      <p>dmca@faynx.tech<br/>We take IP seriously.</p>
+    <div class="method-card">
+      <p class="method-label">Copyright / DMCA</p>
+      <h3>dmca@faynx.tech</h3>
+      <p>We take IP seriously.</p>
     </div>
-    <div class="contact-method">
-      <h3>🔒 Privacy</h3>
-      <p>privacy@faynx.tech<br/>Data & GDPR requests.</p>
+    <div class="method-card">
+      <p class="method-label">Privacy / GDPR</p>
+      <h3>privacy@faynx.tech</h3>
+      <p>Data &amp; rights requests.</p>
     </div>
-    <div class="contact-method">
-      <h3>⏱ Response Time</h3>
-      <p>Usually within 48 hrs.<br/>Mon–Fri, 9am–6pm UTC.</p>
+    <div class="method-card">
+      <p class="method-label">Response Time</p>
+      <h3>Usually &lt; 48 hrs</h3>
+      <p>Mon–Fri, 9am–6pm UTC.</p>
     </div>
   </div>
 </div>
 
-<footer class="site-footer">
+<footer class="site-footer" role="contentinfo">
   <div class="footer-inner">
-    <div class="footer-grid">
-      <div>
-        <a href="/" class="footer-logo">Faynx</a>
-        <p class="footer-desc">Free HD &amp; 4K wallpapers for every screen. Curated daily, no watermarks, instant download.</p>
+    <div class="footer-top">
+      <div class="footer-brand">
+        <span class="footer-wordmark">FAYNX</span>
+        <p>Free HD &amp; 4K wallpapers. Curated daily, no watermarks.</p>
       </div>
-      <div class="footer-col">
-        <h4>Categories</h4>
-        <a href="/category/nature.html">Nature Wallpapers</a>
-        <a href="/category/anime.html">Anime Wallpapers</a>
-        <a href="/category/cars.html">Car Wallpapers</a>
-        <a href="/category/space.html">Space Wallpapers</a>
-        <a href="/category/minimal.html">Minimal Wallpapers</a>
-        <a href="/category/aesthetic.html">Aesthetic Wallpapers</a>
-      </div>
-      <div class="footer-col">
-        <h4>Popular</h4>
-        <a href="/category/nature.html">Dark Forest</a>
-        <a href="/category/space.html">Galaxy 4K</a>
-        <a href="/category/aesthetic.html">Neon City</a>
-        <a href="/category/minimal.html">AMOLED Black</a>
-        <a href="/category/anime.html">Anime Sky</a>
-      </div>
-      <div class="footer-col">
-        <h4>Faynx</h4>
-        <a href="/about.html">About Us</a>
-        <a href="/contact.html">Contact</a>
-        <a href="/privacy-policy.html">Privacy Policy</a>
-        <a href="/sitemap.xml">Sitemap</a>
+      <div class="footer-links">
+        <div class="footer-col">
+          <h4>Categories</h4>
+          <a href="/category/nature.html">Nature</a>
+          <a href="/category/anime.html">Anime</a>
+          <a href="/category/cars.html">Cars</a>
+          <a href="/category/space.html">Space</a>
+        </div>
+        <div class="footer-col">
+          <h4>Faynx</h4>
+          <a href="/about.html">About</a>
+          <a href="/contact.html">Contact</a>
+          <a href="/privacy-policy.html">Privacy</a>
+          <a href="/sitemap.xml">Sitemap</a>
+        </div>
       </div>
     </div>
     <div class="footer-bottom">
-      <span>© 2025 Faynx · Photos from <a href="https://unsplash.com" target="_blank" rel="noopener">Unsplash</a></span>
-      <span><a href="/privacy-policy.html">Privacy</a> · <a href="/contact.html">Contact</a> · <a href="/sitemap.xml">Sitemap</a></span>
+      <span>© 2025 Faynx · Photos via <a href="https://unsplash.com?utm_source=faynx&utm_medium=referral" target="_blank" rel="noopener">Unsplash</a></span>
+      <span><a href="/privacy-policy.html">Privacy</a> · <a href="/contact.html">Contact</a></span>
     </div>
   </div>
 </footer>
 
+<script>
+document.getElementById("submitBtn").addEventListener("click", () => {
+  const name    = document.getElementById("cName").value.trim();
+  const email   = document.getElementById("cEmail").value.trim();
+  const subject = document.getElementById("cSubject").value;
+  const message = document.getElementById("cMessage").value.trim();
+  if (!name || !email || !subject || !message) {
+    alert("Please fill in all fields before sending."); return;
+  }
+  /* In production: POST to /netlify/functions/contact or Formspree */
+  document.getElementById("formFields").style.display = "none";
+  document.getElementById("formSuccess").style.display = "block";
+});
+</script>
 </body>
 </html>
