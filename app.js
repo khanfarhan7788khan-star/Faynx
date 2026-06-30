@@ -52,24 +52,6 @@ const setCk= (k,v,d)=>{ const x=new Date(); x.setTime(x.getTime()+d*864e5); docu
 const getCk= k =>{ const m=document.cookie.match(new RegExp("(^| )"+k+"=([^;]+)")); return m?m[2]:null; };
 
 /* ══════════════════════════════════════
-   CUSTOM CURSOR
-══════════════════════════════════════ */
-(function initCursor() {
-  const cursor = get("cursor");
-  const dot    = get("cursorDot");
-  if (!cursor || !dot || window.matchMedia("(pointer:coarse)").matches) return;
-  let mx = -100, my = -100, cx = -100, cy = -100;
-  document.addEventListener("mousemove", e => { mx = e.clientX; my = e.clientY; dot.style.left = mx+"px"; dot.style.top = my+"px"; }, { passive:true });
-  (function raf() {
-    cx += (mx - cx) * 0.12;
-    cy += (my - cy) * 0.12;
-    cursor.style.left = cx+"px";
-    cursor.style.top  = cy+"px";
-    requestAnimationFrame(raf);
-  })();
-})();
-
-/* ══════════════════════════════════════
    TOAST
 ══════════════════════════════════════ */
 function toast(msg, type="info") {
@@ -318,6 +300,60 @@ async function initHeroBg() {
     }, 7000);
   } catch(_) {}
 }
+
+/* ══════════════════════════════════════
+   SCROLL REVEAL
+══════════════════════════════════════ */
+function initScrollReveal() {
+  const els = document.querySelectorAll(".reveal");
+  if (!els.length) return;
+  if (!("IntersectionObserver" in window)) { els.forEach(el => el.classList.add("in-view")); return; }
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("in-view");
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15, rootMargin: "0px 0px -40px 0px" });
+  els.forEach(el => io.observe(el));
+}
+
+/* ══════════════════════════════════════
+   ANIMATED STAT COUNTERS
+══════════════════════════════════════ */
+function initCounters() {
+  const els = document.querySelectorAll("[data-count]");
+  if (!els.length) return;
+  const animate = (el) => {
+    const raw = el.dataset.count || "";
+    const match = raw.match(/^([\d,.]+)(.*)$/);
+    if (!match) return;
+    const target = parseFloat(match[1].replace(/,/g, ""));
+    const suffix = match[2] || "";
+    const isDecimal = match[1].includes(".");
+    const dur = 1400;
+    const t0 = performance.now();
+    const step = (now) => {
+      const p = Math.min(1, (now - t0) / dur);
+      const eased = 1 - Math.pow(1 - p, 3);
+      const val = target * eased;
+      el.textContent = (isDecimal ? val.toFixed(1) : Math.round(val).toLocaleString()) + suffix;
+      if (p < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  };
+  if (!("IntersectionObserver" in window)) { els.forEach(animate); return; }
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) { animate(entry.target); io.unobserve(entry.target); }
+    });
+  }, { threshold: 0.5 });
+  els.forEach(el => io.observe(el));
+}
+
+initScrollReveal();
+initCounters();
 
 /* ══════════════════════════════════════
    TOPICS BAR

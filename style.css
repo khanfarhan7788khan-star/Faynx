@@ -102,31 +102,6 @@ img { display:block; }
 body.light .grain { opacity:.25; }
 
 /* ══════════════════════════════════════
-   CUSTOM CURSOR (desktop only)
-══════════════════════════════════════ */
-@media(pointer:fine) {
-  body { cursor:none; }
-  .cursor {
-    position:fixed; z-index:9998; pointer-events:none;
-    width:36px; height:36px; border-radius:50%;
-    border:1px solid var(--gold);
-    transform:translate(-50%,-50%);
-    transition:transform .15s var(--ease), width .2s var(--ease), height .2s var(--ease), opacity .2s;
-    will-change:left,top;
-  }
-  .cursor-dot {
-    position:fixed; z-index:9999; pointer-events:none;
-    width:4px; height:4px; border-radius:50%;
-    background:var(--gold);
-    transform:translate(-50%,-50%);
-    transition:transform .08s;
-  }
-  body:has(.pin:hover) .cursor,
-  body:has(.cat-tile:hover) .cursor,
-  body:has(button:hover) .cursor { transform:translate(-50%,-50%) scale(1.8); opacity:.5; }
-}
-
-/* ══════════════════════════════════════
    SPLASH
 ══════════════════════════════════════ */
 .splash {
@@ -282,6 +257,15 @@ body.light .header { background:rgba(247,247,242,0.88); }
   transition:background-image 4s ease;
   will-change:transform;
 }
+.hero-orbs { position:absolute; inset:0; overflow:hidden; pointer-events:none; z-index:1; }
+.hero-orb { position:absolute; border-radius:50%; filter:blur(60px); opacity:.35; }
+.hero-orb-1 { width:420px; height:420px; background:radial-gradient(circle,var(--gold) 0%,transparent 70%); top:-10%; left:-8%; animation:orbFloat1 18s ease-in-out infinite; }
+.hero-orb-2 { width:340px; height:340px; background:radial-gradient(circle,#7c6a9c 0%,transparent 70%); bottom:-12%; right:-6%; animation:orbFloat2 22s ease-in-out infinite; }
+.hero-orb-3 { width:260px; height:260px; background:radial-gradient(circle,var(--gold2) 0%,transparent 70%); top:40%; right:18%; animation:orbFloat3 16s ease-in-out infinite; }
+@keyframes orbFloat1 { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(40px,30px) scale(1.1)} }
+@keyframes orbFloat2 { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(-30px,-40px) scale(1.08)} }
+@keyframes orbFloat3 { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(-24px,26px) scale(.94)} }
+@media(prefers-reduced-motion:reduce) { .hero-orb { animation:none; } }
 .hero-vignette {
   position:absolute; inset:0;
   background:radial-gradient(ellipse 80% 70% at 50% 40%, transparent 10%, rgba(6,6,10,0.6) 60%, rgba(6,6,10,0.95) 100%);
@@ -381,6 +365,36 @@ body.light .header { background:rgba(247,247,242,0.88); }
 }
 .scroll-arrow { width:1px; height:32px; background:linear-gradient(to bottom,var(--fog),transparent); animation:scrollPulse 2s ease-in-out infinite; }
 @keyframes scrollPulse { 0%,100%{opacity:.3;transform:scaleY(.6)} 50%{opacity:1;transform:scaleY(1)} }
+
+/* ══════════════════════════════════════
+   SCROLL REVEAL
+══════════════════════════════════════ */
+.reveal { opacity:0; transform:translateY(28px); transition:opacity .8s var(--ease), transform .8s var(--ease); }
+.reveal.in-view { opacity:1; transform:none; }
+.why-grid .why-card.reveal { transition-delay:0s; }
+.why-grid .why-card:nth-child(1).reveal { transition-delay:.05s; }
+.why-grid .why-card:nth-child(2).reveal { transition-delay:.12s; }
+.why-grid .why-card:nth-child(3).reveal { transition-delay:.19s; }
+.why-grid .why-card:nth-child(4).reveal { transition-delay:.26s; }
+@media(prefers-reduced-motion:reduce) { .reveal { opacity:1; transform:none; transition:none; } }
+
+/* ══════════════════════════════════════
+   WHY FAYNX
+══════════════════════════════════════ */
+.why-section { padding:64px 22px 8px; background:var(--ink); }
+.why-inner { max-width:1280px; margin:0 auto; }
+.why-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+.why-card {
+  background:var(--ink2); border:1px solid var(--rule); border-radius:var(--r-lg);
+  padding:26px 22px; text-align:left;
+  transition:border-color .25s var(--ease), transform .25s var(--ease), box-shadow .25s var(--ease);
+}
+.why-card:hover { border-color:var(--gold); transform:translateY(-4px); box-shadow:0 20px 50px rgba(0,0,0,.55); }
+.why-icon { font-size:22px; color:var(--gold); display:block; margin-bottom:14px; }
+.why-card h3 { font-family:'Cormorant Garamond',serif; font-size:18px; font-weight:500; font-style:italic; color:var(--snow); margin-bottom:8px; }
+.why-card p { font-size:12.5px; color:var(--mist); line-height:1.7; font-family:'DM Sans',sans-serif; font-weight:300; }
+@media(max-width:860px) { .why-grid { grid-template-columns:repeat(2,1fr); } }
+@media(max-width:480px) { .why-grid { grid-template-columns:1fr; } .why-section { padding:48px 18px 4px; } }
 
 /* ══════════════════════════════════════
    CATEGORY SECTION

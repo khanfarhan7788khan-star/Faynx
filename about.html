@@ -94,9 +94,9 @@
   <h1 class="page-title">About <em>Faynx</em></h1>
   <p class="page-lead">A free HD and 4K wallpaper platform built around one principle: beautiful imagery should be available to everyone, without friction, watermarks, or accounts.</p>
 
-  <div class="stat-row" aria-label="Key statistics">
-    <div class="stat-box"><strong class="stat-num">1,000+</strong><span class="stat-lbl">Wallpapers</span></div>
-    <div class="stat-box"><strong class="stat-num">6</strong><span class="stat-lbl">Categories</span></div>
+  <div class="stat-row reveal" aria-label="Key statistics">
+    <div class="stat-box"><strong class="stat-num" data-count="1000+">1,000+</strong><span class="stat-lbl">Wallpapers</span></div>
+    <div class="stat-box"><strong class="stat-num" data-count="6">6</strong><span class="stat-lbl">Categories</span></div>
     <div class="stat-box"><strong class="stat-num">4K</strong><span class="stat-lbl">Max Quality</span></div>
   </div>
 
@@ -120,7 +120,7 @@
   </ul>
 
   <h2 class="about-h2">Why Trust Faynx</h2>
-  <div class="trust-grid">
+  <div class="trust-grid reveal">
     <div class="trust-card"><span class="trust-card-icon">◎</span><h3>No Sign-Up Required</h3><p>Browse and download without creating an account. Your privacy is non-negotiable.</p></div>
     <div class="trust-card"><span class="trust-card-icon">◈</span><h3>No Watermarks</h3><p>Every download is the full, clean image. Always.</p></div>
     <div class="trust-card"><span class="trust-card-icon">◇</span><h3>Instant Download</h3><p>Click to download. No waiting screens, no redirects, no ads.</p></div>
@@ -171,5 +171,41 @@
     </div>
   </div>
 </footer>
+
+<script>
+(function(){
+  function reveal(){
+    var els=document.querySelectorAll(".reveal");
+    if(!els.length) return;
+    if(!("IntersectionObserver" in window)){ els.forEach(function(e){e.classList.add("in-view");}); return; }
+    var io=new IntersectionObserver(function(entries){
+      entries.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add("in-view"); io.unobserve(en.target); } });
+    },{threshold:.15,rootMargin:"0px 0px -40px 0px"});
+    els.forEach(function(e){ io.observe(e); });
+  }
+  function counters(){
+    var els=document.querySelectorAll("[data-count]");
+    if(!els.length) return;
+    function animate(el){
+      var raw=el.dataset.count||"", m=raw.match(/^([\d,.]+)(.*)$/);
+      if(!m) return;
+      var target=parseFloat(m[1].replace(/,/g,"")), suffix=m[2]||"", dec=m[1].indexOf(".")>-1;
+      var dur=1400, t0=performance.now();
+      function step(now){
+        var p=Math.min(1,(now-t0)/dur), eased=1-Math.pow(1-p,3), val=target*eased;
+        el.textContent=(dec?val.toFixed(1):Math.round(val).toLocaleString())+suffix;
+        if(p<1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+    if(!("IntersectionObserver" in window)){ els.forEach(animate); return; }
+    var io=new IntersectionObserver(function(entries){
+      entries.forEach(function(en){ if(en.isIntersecting){ animate(en.target); io.unobserve(en.target); } });
+    },{threshold:.5});
+    els.forEach(function(e){ io.observe(e); });
+  }
+  reveal(); counters();
+})();
+</script>
 </body>
 </html>

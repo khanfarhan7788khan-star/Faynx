@@ -33,9 +33,6 @@
 <!-- GRAIN OVERLAY -->
 <div class="grain" aria-hidden="true"></div>
 
-<!-- CURSOR -->
-<div class="cursor" id="cursor" aria-hidden="true"></div>
-<div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
 
 <!-- SPLASH -->
 <div id="splash" class="splash" role="status" aria-label="Loading Faynx">
@@ -146,6 +143,11 @@
 <!-- HERO -->
 <section class="hero" id="hero" aria-label="Hero">
   <div class="hero-reel" id="heroBg" aria-hidden="true"></div>
+  <div class="hero-orbs" aria-hidden="true">
+    <div class="hero-orb hero-orb-1"></div>
+    <div class="hero-orb hero-orb-2"></div>
+    <div class="hero-orb hero-orb-3"></div>
+  </div>
   <div class="hero-vignette" aria-hidden="true"></div>
   <div class="hero-content">
     <p class="hero-eyebrow"><span class="eyebrow-dot"></span>Curated daily from Unsplash</p>
@@ -161,7 +163,7 @@
     </div>
     <div class="hero-chips" id="heroChips" aria-label="Popular searches"></div>
     <div class="hero-tally" aria-label="Stats">
-      <span><strong>10M+</strong><em>Photos</em></span>
+      <span><strong data-count="10M+">10M+</strong><em>Photos</em></span>
       <span class="tally-sep">—</span>
       <span><strong>Free</strong><em>Always</em></span>
       <span class="tally-sep">—</span>
@@ -174,8 +176,40 @@
   </div>
 </section>
 
+<!-- WHY FAYNX -->
+<section class="why-section reveal" aria-label="Why choose Faynx">
+  <div class="why-inner">
+    <header class="section-header">
+      <p class="section-eyebrow">The Difference</p>
+      <h2 class="section-title">Why Faynx</h2>
+    </header>
+    <div class="why-grid">
+      <div class="why-card reveal">
+        <span class="why-icon">◈</span>
+        <h3>Zero Watermarks</h3>
+        <p>Every download is the full, untouched image — exactly as the photographer shot it.</p>
+      </div>
+      <div class="why-card reveal">
+        <span class="why-icon">◎</span>
+        <h3>No Sign-Up Wall</h3>
+        <p>Browse, preview, and download instantly. No accounts, no email gates, no friction.</p>
+      </div>
+      <div class="why-card reveal">
+        <span class="why-icon">◇</span>
+        <h3>True 4K Quality</h3>
+        <p>Multiple resolutions up to 4K UHD, delivered as optimised WebP for fast, crisp loads.</p>
+      </div>
+      <div class="why-card reveal">
+        <span class="why-icon">◉</span>
+        <h3>Works Offline</h3>
+        <p>Install Faynx as an app and revisit your saved wallpapers anytime, even without signal.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- CATEGORY SHOWCASE -->
-<section class="cat-section" aria-label="Browse by category">
+<section class="cat-section reveal" aria-label="Browse by category">
   <div class="cat-section-inner">
     <header class="section-header">
       <p class="section-eyebrow">Explore</p>
@@ -255,7 +289,7 @@
 </main>
 
 <!-- SEO TEXT -->
-<section class="seo-block" aria-label="About Faynx">
+<section class="seo-block reveal" aria-label="About Faynx">
   <h2>Free HD &amp; 4K Wallpapers — Instant Download</h2>
   <p>Faynx offers thousands of free wallpapers for desktop, phone, and tablet. Browse <a href="/category/nature.html">nature wallpapers</a>, <a href="/category/anime.html">anime wallpapers</a>, <a href="/category/cars.html">car wallpapers</a>, <a href="/category/space.html">space wallpapers</a>, <a href="/category/minimal.html">minimal wallpapers</a>, and <a href="/category/aesthetic.html">aesthetic wallpapers</a> — all in HD and 4K resolution with no watermarks.</p>
   <div class="seo-links">

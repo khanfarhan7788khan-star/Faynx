@@ -15,7 +15,7 @@ A fast, SEO-optimised Progressive Web App powered by the Unsplash API and Fireba
 | Categories | Hidden in nav only | Dedicated showcase section with parallax tiles |
 | Gallery | Basic masonry | Animated masonry + grid toggle with skeleton loaders |
 | Mobile UX | Tap to lightbox | Long-press action sheet (download / save / share / view) |
-| Cursor | System default | Custom gold ring cursor with lag interpolation (desktop) |
+| Cursor | System default | System default (custom cursor removed) |
 | Animations | None | fadeUp, cardIn, splash progress, hero scroll hint |
 | SEO | Generic alt text | Keyword-rich alt, ImageObject schema, image sitemap |
 | Images | Raw JPEG URLs | WebP via Unsplash Imgix params (`fm=webp&q=80`) |
