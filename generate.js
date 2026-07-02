@@ -525,45 +525,92 @@ function generateWallpaperPage(item) {
     `${clusterLabel.toLowerCase()} wallpaper`, "hd wallpaper", "4k wallpaper", "free wallpaper"
   ];
 
-  // JSON-LD — ImageObject + BreadcrumbList + WebPage
-  const schema = {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "ImageObject",
-        "@id": `${BASE_URL}/wallpaper/${slug}.html#image`,
-        "name": `${keyword} Wallpaper ${variant}`,
-        "description": `${intro.substring(0,200)}`,
-        "contentUrl": mainImg,
-        "thumbnailUrl": thumbUrl(keyword),
-        "encodingFormat": "image/webp",
-        "width": "1920", "height": "1080",
-        "license": "https://unsplash.com/license",
-        "acquireLicensePage": `${BASE_URL}/wallpaper/${slug}.html`,
-        "creditText": "Unsplash",
-        "creator": { "@type": "Organization", "name": "Unsplash", "url": "https://unsplash.com" }
-      },
-      {
-        "@type": "BreadcrumbList",
-        "itemListElement": [
-          { "@type":"ListItem","position":1,"name":"Home","item":BASE_URL },
-          { "@type":"ListItem","position":2,"name":`${clusterLabel} Wallpapers`,"item":`${BASE_URL}/category/${cluster}.html` },
-          { "@type":"ListItem","position":3,"name":`${keyword} Wallpaper`,"item":`${BASE_URL}/wallpaper/${slug}.html` }
-        ]
-      },
-      {
-        "@type": "WebPage",
-        "@id": `${BASE_URL}/wallpaper/${slug}.html`,
-        "name": title,
-        "url": `${BASE_URL}/wallpaper/${slug}.html`,
-        "description": metaDesc,
-        "dateModified": TODAY,
-        "isPartOf": { "@type":"WebSite","url":BASE_URL,"name":SITE_NAME },
-        "primaryImageOfPage": { "@id":`${BASE_URL}/wallpaper/${slug}.html#image` }
-      }
-    ]
-  };
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
 
+    {
+      "@type": "Organization",
+      "@id": `${BASE_URL}/#organization`,
+      "name": "Faynx",
+      "url": BASE_URL,
+      "logo": {
+        "@type": "ImageObject",
+        "url": `${BASE_URL}/icons/logo-512.png`,
+        "width": 512,
+        "height": 512
+      },
+      "sameAs": [
+        BASE_URL
+      ]
+    },
+
+    {
+      "@type": "ImageObject",
+      "@id": `${BASE_URL}/wallpaper/${slug}.html#image`,
+      "name": `${keyword} Wallpaper ${variant}`,
+      "description": intro.substring(0, 200),
+      "contentUrl": mainImg,
+      "thumbnailUrl": thumbUrl(keyword),
+      "encodingFormat": "image/webp",
+      "width": "1920",
+      "height": "1080",
+      "license": "https://unsplash.com/license",
+      "acquireLicensePage": `${BASE_URL}/wallpaper/${slug}.html`,
+      "creditText": "Unsplash",
+      "creator": {
+        "@type": "Organization",
+        "name": "Unsplash",
+        "url": "https://unsplash.com"
+      }
+    },
+
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": BASE_URL
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": `${clusterLabel} Wallpapers`,
+          "item": `${BASE_URL}/category/${cluster}.html`
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": `${keyword} Wallpaper`,
+          "item": `${BASE_URL}/wallpaper/${slug}.html`
+        }
+      ]
+    },
+
+    {
+      "@type": "WebPage",
+      "@id": `${BASE_URL}/wallpaper/${slug}.html`,
+      "name": title,
+      "url": `${BASE_URL}/wallpaper/${slug}.html`,
+      "description": metaDesc,
+      "dateModified": TODAY,
+      "isPartOf": {
+        "@type": "WebSite",
+        "url": BASE_URL,
+        "name": SITE_NAME
+      },
+      "publisher": {
+        "@id": `${BASE_URL}/#organization`
+      },
+      "primaryImageOfPage": {
+        "@id": `${BASE_URL}/wallpaper/${slug}.html#image`
+      }
+    }
+
+  ]
+};
   const relatedHTML = related.map(r => `
     <a href="/wallpaper/${r.slug}.html" class="wall-card" style="aspect-ratio:4/3" aria-label="${r.keyword} wallpaper">
       <img src="${thumbUrl(r.keyword)}" alt="${r.keyword} ${r.variant} wallpaper — free download" loading="lazy" width="300" height="225"/>
