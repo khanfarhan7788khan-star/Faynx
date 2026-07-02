@@ -20,7 +20,7 @@ const db   = getFirestore(FB);
 const gProvider = new GoogleAuthProvider();
 
 /* ── Unsplash — MOVE TO SERVERLESS PROXY before production ── */
-const KEY  = "FMEevPJq5OgeZ4W2-k2fDpwchFyA_cyYhvs2HoDC6UM";
+const KEY  = "JNsNqxP4c9YlEyKk_HiWhSPR_2OyvSQxc5zj_x4CKMY";
 const BASE = "https://api.unsplash.com";
 const UH   = { Authorization: `Client-ID ${KEY}` };
 
