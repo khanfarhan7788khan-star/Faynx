@@ -5,5 +5,5 @@ Disallow: /api/
 Disallow: /*.json$
 
 # Sitemap index
-Sitemap: https://faynx.tech/sitemap.xml
-Host: https://faynx.tech
+Sitemap: https://wallpaper.faynx.tech/sitemap.xml
+Host: https://wallpaper.faynx.tech
