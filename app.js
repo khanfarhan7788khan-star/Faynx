@@ -1064,10 +1064,38 @@ styleEl.textContent = sheetCSS;
 document.head.appendChild(styleEl);
 
 /* ══════════════════════════════════════
-   SERVICE WORKER + INIT
+   SERVICE WORKER
 ══════════════════════════════════════ */
+
 if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("/service-worker.js").catch(() => {});
+  window.addEventListener("load", async () => {
+    try {
+      const registration = await navigator.serviceWorker.register("/service-worker.js");
+
+      registration.update();
+
+      registration.addEventListener("updatefound", () => {
+        const newWorker = registration.installing;
+
+        newWorker?.addEventListener("statechange", () => {
+          if (
+            newWorker.state === "installed" &&
+            navigator.serviceWorker.controller
+          ) {
+            console.log("New version available.");
+            window.location.reload();
+          }
+        });
+      });
+
+      navigator.serviceWorker.addEventListener("controllerchange", () => {
+        window.location.reload();
+      });
+
+    } catch (err) {
+      console.error("Service Worker registration failed:", err);
+    }
+  });
 }
 
 buildTopics();

@@ -37,19 +37,30 @@ self.addEventListener("install", event => {
 ══════════════════════════════════ */
 self.addEventListener("activate", event => {
   event.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(
-        keys.map(key => {
-          if (![APP_CACHE, IMAGE_CACHE, API_CACHE].includes(key)) {
-            return caches.delete(key);
-          }
-        })
-      )
-    )
-  );
-  self.clients.claim();
-});
+    (async () => {
+      const keys = await caches.keys();
 
+      await Promise.all(
+        keys
+          .filter(key => ![APP_CACHE, IMAGE_CACHE, API_CACHE].includes(key))
+          .map(key => caches.delete(key))
+      );
+
+      await self.clients.claim();
+
+      const clients = await self.clients.matchAll({
+        includeUncontrolled: true,
+        type: "window"
+      });
+
+      clients.forEach(client => {
+        client.postMessage({
+          type: "SW_UPDATED"
+        });
+      });
+    })()
+  );
+});
 /* ══════════════════════════════════
    MESSAGE — cache saved images
 ══════════════════════════════════ */
@@ -105,10 +116,49 @@ self.addEventListener("fetch", event => {
   }
 
   /* 4. App shell assets — cache first */
-  event.respondWith(
-    caches.match(req).then(cached => cached || fetch(req))
-  );
+ event.respondWith(
+  caches.match(req).then(async cached => {
+
+    const network = fetch(req)
+      .then(async response => {
+
+        if (response.ok) {
+          const cache = await caches.open(APP_CACHE);
+          cache.put(req, response.clone());
+        }
+
+        return response;
+      })
+      .catch(() => cached);
+
+    return cached || network;
+
+  })
+);
 });
+
+if ("serviceWorker" in navigator) {
+
+  window.addEventListener("load", async () => {
+
+    const registration =
+      await navigator.serviceWorker.register("/service-worker.js");
+
+    registration.update();
+
+    navigator.serviceWorker.addEventListener("message", event => {
+
+      if (event.data?.type === "SW_UPDATED") {
+
+        window.location.reload();
+
+      }
+
+    });
+
+  });
+
+}
 
 /* ── Network-first helper with TTL ── */
 async function networkFirst(req, cacheName, ttlSeconds) {
