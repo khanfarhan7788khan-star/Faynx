@@ -1,43 +1,38 @@
-/* ═══════════════════════════════════════════════
-   FAYNX Service Worker v4 — Redesigned
-   Strategy:
-   - App shell: Cache-first
-   - Images (saved): On-demand cache via postMessage
-   - API (/api/*): Network-first with stale fallback
-   - Unsplash CDN: Network-first with cache fallback
-═══════════════════════════════════════════════ */
+/* ==========================================================
+   FAYNX Service Worker v5
+   Fixes:
+   ✔ No hard refresh required
+   ✔ Network-first for HTML
+   ✔ Cache-first for assets
+   ✔ Network-first for API
+   ✔ Network-first for Unsplash
+   ========================================================== */
 
-const APP_CACHE   = "faynx-app-v4";
-const IMAGE_CACHE = "faynx-images-v1";
-const API_CACHE   = "faynx-api-v2";
-const MAX_IMAGES  = 60;
+const APP_CACHE = "faynx-app-v5";
+const IMAGE_CACHE = "faynx-images-v2";
+const API_CACHE = "faynx-api-v3";
 
-/* ── App shell files ── */
 const APP_FILES = [
-  "./",
-  "./index.html",
-  "./style.css",
-  "./app.js",
-  "./manifest.json",
-  "./offline.html",
+  "/",
+  "/index.html",
+  "/style.css",
+  "/app.js",
+  "/manifest.json",
+  "/offline.html"
 ];
 
-/* ══════════════════════════════════
-   INSTALL
-══════════════════════════════════ */
 self.addEventListener("install", event => {
   event.waitUntil(
     caches.open(APP_CACHE).then(cache => cache.addAll(APP_FILES))
   );
+
   self.skipWaiting();
 });
 
-/* ══════════════════════════════════
-   ACTIVATE — purge old caches
-══════════════════════════════════ */
 self.addEventListener("activate", event => {
   event.waitUntil(
     (async () => {
+
       const keys = await caches.keys();
 
       await Promise.all(
@@ -48,136 +43,161 @@ self.addEventListener("activate", event => {
 
       await self.clients.claim();
 
-      const clients = await self.clients.matchAll({
-        includeUncontrolled: true,
-        type: "window"
-      });
-
-      clients.forEach(client => {
-        client.postMessage({
-          type: "SW_UPDATED"
-        });
-      });
     })()
   );
 });
-/* ══════════════════════════════════
-   MESSAGE — cache saved images
-══════════════════════════════════ */
+
+/* =======================================================
+   Cache downloaded wallpapers
+======================================================= */
+
 self.addEventListener("message", async event => {
+
   if (event.data?.type !== "CACHE_IMAGE") return;
+
   try {
+
     const cache = await caches.open(IMAGE_CACHE);
-    const keys  = await cache.keys();
-    /* LRU eviction: remove oldest when over limit */
-    if (keys.length >= MAX_IMAGES) {
-      await cache.delete(keys[0]);
-    }
+
     await cache.add(event.data.url);
-  } catch(_) {}
+
+  } catch (e) {}
+
 });
 
-/* ══════════════════════════════════
-   FETCH
-══════════════════════════════════ */
+/* =======================================================
+   Fetch
+======================================================= */
+
 self.addEventListener("fetch", event => {
-  const { request: req } = event;
-  if (req.method !== "GET") return;
 
-  const url = new URL(req.url);
+  const request = event.request;
 
-  /* 1. Internal API proxy — network first */
+  if (request.method !== "GET") return;
+
+  const url = new URL(request.url);
+
+  /* ---------- API ---------- */
+
   if (url.pathname.startsWith("/api/")) {
-    event.respondWith(networkFirst(req, API_CACHE, 300));
+
+    event.respondWith(networkFirst(request, API_CACHE));
+
     return;
+
   }
 
-  /* 2. Unsplash CDN images — network first, cache fallback */
-  if (url.hostname === "images.unsplash.com" || url.hostname === "source.unsplash.com") {
-    event.respondWith(networkFirst(req, IMAGE_CACHE, 3600));
+  /* ---------- Unsplash ---------- */
+
+  if (
+    url.hostname.includes("unsplash.com") ||
+    url.hostname.includes("images.unsplash.com")
+  ) {
+
+    event.respondWith(networkFirst(request, IMAGE_CACHE));
+
     return;
+
   }
 
-  /* 3. HTML pages — cache first, network fallback, offline page */
-  if (req.headers.get("accept")?.includes("text/html")) {
+  /* ---------- HTML ---------- */
+
+  if (request.mode === "navigate") {
+
     event.respondWith(
-      caches.match(req).then(cached =>
-        cached || fetch(req).then(res => {
-          /* Cache wallpaper & category pages */
-          if (url.pathname.startsWith("/wallpaper/") || url.pathname.startsWith("/category/")) {
-            const clone = res.clone();
-            caches.open(APP_CACHE).then(c => c.put(req, clone));
-          }
-          return res;
-        }).catch(() => caches.match("./offline.html"))
-      )
+
+      fetch(request, {
+        cache: "no-store"
+      })
+        .then(response => {
+
+          const copy = response.clone();
+
+          caches.open(APP_CACHE).then(cache => {
+            cache.put(request, copy);
+          });
+
+          return response;
+
+        })
+        .catch(async () => {
+
+          const cached = await caches.match(request);
+
+          return cached || caches.match("/offline.html");
+
+        })
+
     );
+
     return;
+
   }
 
-  /* 4. App shell assets — cache first */
- event.respondWith(
-  caches.match(req).then(async cached => {
+  /* ---------- CSS / JS / Fonts ---------- */
 
-    const network = fetch(req)
-      .then(async response => {
+  event.respondWith(
 
-        if (response.ok) {
-          const cache = await caches.open(APP_CACHE);
-          cache.put(req, response.clone());
-        }
+    caches.match(request).then(cached => {
 
-        return response;
-      })
-      .catch(() => cached);
+      if (cached) {
 
-    return cached || network;
-
-  })
-);
-});
-
-if ("serviceWorker" in navigator) {
-
-  window.addEventListener("load", async () => {
-
-    const registration =
-      await navigator.serviceWorker.register("/service-worker.js");
-
-    registration.update();
-
-    navigator.serviceWorker.addEventListener("message", event => {
-
-      if (event.data?.type === "SW_UPDATED") {
-
-        window.location.reload();
+        return cached;
 
       }
 
+      return fetch(request).then(response => {
+
+        if (response.ok) {
+
+          const copy = response.clone();
+
+          caches.open(APP_CACHE).then(cache => {
+
+            cache.put(request, copy);
+
+          });
+
+        }
+
+        return response;
+
+      });
+
+    })
+
+  );
+
+});
+
+/* =======================================================
+   Network First
+======================================================= */
+
+async function networkFirst(request, cacheName) {
+
+  const cache = await caches.open(cacheName);
+
+  try {
+
+    const response = await fetch(request, {
+      cache: "no-store"
     });
 
-  });
+    cache.put(request, response.clone());
 
-}
+    return response;
 
-/* ── Network-first helper with TTL ── */
-async function networkFirst(req, cacheName, ttlSeconds) {
-  try {
-    const res   = await fetch(req);
-    const cache = await caches.open(cacheName);
-    const clone = res.clone();
-    /* Add timestamp header for TTL checking */
-    const headers = new Headers(clone.headers);
-    headers.set("sw-cached-at", Date.now().toString());
-    const stamped = new Response(await clone.blob(), { status:clone.status, headers });
-    cache.put(req, stamped);
-    return res;
-  } catch(_) {
-    const cached = await caches.match(req);
-    if (cached) {
-      const cachedAt = Number(cached.headers.get("sw-cached-at") || 0);
-      if (Date.now() - cachedAt < ttlSeconds * 1000) return cached;
-    }
-    return cached || new Response("Offline", { status:503 });
+  } catch {
+
+    const cached = await cache.match(request);
+
+    if (cached) return cached;
+
+    return new Response("Offline", {
+      status: 503
+    });
+
   }
+
 }

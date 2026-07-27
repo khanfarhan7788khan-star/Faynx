@@ -20,7 +20,7 @@ const db   = getFirestore(FB);
 const gProvider = new GoogleAuthProvider();
 
 /* ── Unsplash — MOVE TO SERVERLESS PROXY before production ── */
-const KEY  = "FMEevPJq5OgeZ4W2-k2fDpwchFyA_cyYhvs2HoDC6UM";
+const KEY  = "FMEeJNsNqxP4c9YlEyKk_HiWhSPR_2OyvSQxc5zj_x4CKMYvPJq5OgeZ4W2-k2fDpwchFyA_cyYhvs2HoDC6UM";
 const BASE = "https://api.unsplash.com";
 const UH   = { Authorization: `Client-ID ${KEY}` };
 
@@ -36,11 +36,70 @@ function imgUrl(rawUrl, w = null, fmt = "webp") {
 }
 
 const API = {
-  async topics()           { const r=await fetch(`${BASE}/topics?per_page=20&order_by=featured`,{headers:UH}); if(!r.ok) throw new Error("topics"); return r.json(); },
-  async topicPhotos(s,p=1) { const r=await fetch(`${BASE}/topics/${s}/photos?page=${p}&per_page=20&order_by=popular`,{headers:UH}); if(!r.ok) throw new Error("tp"); return r.json(); },
-  async search(q,p=1)      { const r=await fetch(`${BASE}/search/photos?query=${encodeURIComponent(q)}&page=${p}&per_page=20`,{headers:UH}); if(!r.ok) throw new Error("search"); return (await r.json()).results; },
-  async random(n=6)        { const r=await fetch(`${BASE}/photos/random?count=${n}&topics=wallpapers`,{headers:UH}); if(!r.ok) throw new Error("random"); return r.json(); },
-  trackDownload(photo)     { try{ fetch(photo.links.download_location,{headers:UH}); }catch(_){} }
+  async topics() {
+    const r = await fetch(
+      `${BASE}/topics?per_page=20&order_by=featured`,
+      {
+        headers: UH,
+        cache: "no-store"
+      }
+    );
+
+    if (!r.ok) throw new Error("topics");
+
+    return r.json();
+  },
+
+  async topicPhotos(s, p = 1) {
+    const r = await fetch(
+      `${BASE}/topics/${s}/photos?page=${p}&per_page=20&order_by=popular`,
+      {
+        headers: UH,
+        cache: "no-store"
+      }
+    );
+
+    if (!r.ok) throw new Error("tp");
+
+    return r.json();
+  },
+
+  async search(q, p = 1) {
+    const r = await fetch(
+      `${BASE}/search/photos?query=${encodeURIComponent(q)}&page=${p}&per_page=20`,
+      {
+        headers: UH,
+        cache: "no-store"
+      }
+    );
+
+    if (!r.ok) throw new Error("search");
+
+    return (await r.json()).results;
+  },
+
+  async random(n = 6) {
+    const r = await fetch(
+      `${BASE}/photos/random?count=${n}&topics=wallpapers`,
+      {
+        headers: UH,
+        cache: "no-store"
+      }
+    );
+
+    if (!r.ok) throw new Error("random");
+
+    return r.json();
+  },
+
+  trackDownload(photo) {
+    try {
+      fetch(photo.links.download_location, {
+        headers: UH,
+        cache: "no-store"
+      });
+    } catch (_) {}
+  }
 };
 
 /* ── Utils ── */
@@ -425,37 +484,73 @@ async function loadPhotos(reset = false) {
   if (!gallery) return;
   if (loading && !reset) return;
   if (noMore && !reset) return;
-  loading = true; noMore = false;
+
+  loading = true;
+  noMore = false;
+
   const id = ++reqId;
-  if (reset) { gallery.innerHTML = ""; page = 1; window.allPhotos = []; hide(get("galleryEnd")); }
-  if (page === 1) showSkels(); else show(get("gallerySpinner"));
+
+  if (reset) {
+    gallery.innerHTML = "";
+    page = 1;
+    window.allPhotos = [];
+    hide(get("galleryEnd"));
+  }
+
+  if (page === 1) {
+    showSkels();
+  } else {
+    show(get("gallerySpinner"));
+  }
+
   try {
-    const photos = feedMode === "search"
-      ? await API.search(feedQuery, page)
-      : await API.topicPhotos(feedSlug, page);
+
+    const photos =
+      feedMode === "search"
+        ? await API.search(feedQuery, page, { cache: "no-store" })
+        : await API.topicPhotos(feedSlug, page, { cache: "no-store" });
+
     if (id !== reqId) return;
-    if (!photos?.length) {
-      if (page === 1) showErr("Nothing found — try a different search");
-      noMore = true; if (page > 1) show(get("galleryEnd")); return;
+
+    if (!photos || photos.length === 0) {
+
+      if (page === 1)
+        showErr("Nothing found — try another search.");
+
+      noMore = true;
+
+      if (page > 1)
+        show(get("galleryEnd"));
+
+      return;
+
     }
+
     window.allPhotos = [...window.allPhotos, ...photos].slice(-300);
-    photos.forEach((p, i) => renderPin(p, i, gallery));
+
+    photos.forEach((photo, index) => {
+      renderPin(photo, index, gallery);
+    });
+
     page++;
-  } catch(e) {
-    if (e?.name !== "AbortError" && id === reqId && page === 1) showErr("Failed to load. Check your connection.");
+
+  } catch (err) {
+
+    if (err.name !== "AbortError" && id === reqId) {
+
+      if (page === 1)
+        showErr("Failed to load wallpapers.");
+
+    }
+
   } finally {
-    removeSkels(); hide(get("gallerySpinner")); loading = false;
+
+    removeSkels();
+    hide(get("gallerySpinner"));
+    loading = false;
+
   }
 }
-window.addEventListener("scroll", () => {
-  if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 600) loadPhotos();
-}, { passive:true });
-
-const SKEL_H = [280,200,340,250,190,315,220,290,170,355,235,265,300,180,310];
-function showSkels() { removeSkels(); SKEL_H.forEach(h => { const s=document.createElement("div"); s.className="pin-skel"; s.style.height=h+"px"; gallery.appendChild(s); }); }
-function removeSkels() { gallery?.querySelectorAll(".pin-skel").forEach(e => e.remove()); }
-function showErr(msg) { gallery.innerHTML=`<div class="err-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" width="48" height="48"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><p>${msg}</p><button class="retry-btn" onclick="loadPhotos(true)">Retry</button></div>`; }
-
 /* ══════════════════════════════════════
    RENDER PIN
 ══════════════════════════════════════ */
@@ -1067,38 +1162,3 @@ document.head.appendChild(styleEl);
    SERVICE WORKER
 ══════════════════════════════════════ */
 
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", async () => {
-    try {
-      const registration = await navigator.serviceWorker.register("/service-worker.js");
-
-      registration.update();
-
-      registration.addEventListener("updatefound", () => {
-        const newWorker = registration.installing;
-
-        newWorker?.addEventListener("statechange", () => {
-          if (
-            newWorker.state === "installed" &&
-            navigator.serviceWorker.controller
-          ) {
-            console.log("New version available.");
-            window.location.reload();
-          }
-        });
-      });
-
-      navigator.serviceWorker.addEventListener("controllerchange", () => {
-        window.location.reload();
-      });
-
-    } catch (err) {
-      console.error("Service Worker registration failed:", err);
-    }
-  });
-}
-
-buildTopics();
-initHero();
-initHeroBg();
-loadPhotos(true);
