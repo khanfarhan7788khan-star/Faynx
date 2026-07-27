@@ -32,14 +32,105 @@ function hashCode(str) {
   return Math.abs(hash);
 }
 
-/** Unsplash Imgix URL with WebP + quality */
-function imgUrl(keyword, w = 1920, h = 1080, fmt = "webp") {
-  const q = encodeURIComponent(keyword.replace(/\s+/g, ","));
-  return `https://source.unsplash.com/${w}x${h}/?${q}&fm=${fmt}&q=80`;
+/** ─────────────────────────────────────────
+ *  IMAGE PROVIDER
+ *  NOTE: source.unsplash.com was permanently shut down by Unsplash
+ *  in 2023 — every URL built the old way 404s. This resolver pulls
+ *  one real, keyword-matched photo per keyword at build time from
+ *  Pexels (primary) or Pixabay (secondary), both of which allow
+ *  free API keys with generous limits, and falls back to Picsum
+ *  Photos (keyless, unlimited, deterministic per keyword) so the
+ *  build NEVER produces a broken image link, even with no keys
+ *  configured or no network access at build time.
+ *
+ *  Set these in your shell / CI before running `node generate.js`
+ *  to get real, topic-matched photos instead of the Picsum fallback:
+ *    export PEXELS_API_KEY="..."   # https://www.pexels.com/api/
+ *    export PIXABAY_API_KEY="..."  # https://pixabay.com/api/docs/
+ * ───────────────────────────────────────── */
+const PEXELS_KEY  = process.env.PEXELS_API_KEY  || "";
+const PIXABAY_KEY = process.env.PIXABAY_API_KEY || "";
+const CACHE_FILE  = path.join(__dirname, ".image-cache.json");
+
+let imageCache = {};
+try { imageCache = JSON.parse(fs.readFileSync(CACHE_FILE, "utf8")); } catch (_) { imageCache = {}; }
+
+function seedFor(keyword) { return slugify(keyword) || "faynx"; }
+
+/** Deterministic Picsum fallback — always resolves, no key, no rate limit, supports arbitrary w/h like Unsplash Source used to. */
+function picsumUrl(keyword, w, h) {
+  return `https://picsum.photos/seed/${seedFor(keyword)}/${w}/${h}`;
+}
+
+async function fetchPexels(keyword) {
+  if (!PEXELS_KEY) return null;
+  const r = await fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(keyword)}&per_page=1&orientation=landscape`, { headers: { Authorization: PEXELS_KEY } });
+  if (!r.ok) throw new Error(`pexels ${r.status}`);
+  const d = await r.json();
+  const p = d.photos && d.photos[0];
+  if (!p) return null;
+  return { provider: "pexels", base: p.src.original };
+}
+
+async function fetchPixabay(keyword) {
+  if (!PIXABAY_KEY) return null;
+  const r = await fetch(`https://pixabay.com/api/?key=${PIXABAY_KEY}&q=${encodeURIComponent(keyword)}&image_type=photo&orientation=horizontal&per_page=3&safesearch=true`);
+  if (!r.ok) throw new Error(`pixabay ${r.status}`);
+  const d = await r.json();
+  const p = d.hits && d.hits[0];
+  if (!p) return null;
+  return { provider: "pixabay", base: p.largeImageURL };
+}
+
+/** Resolve (and cache to disk) one representative photo record per keyword. */
+async function resolveKeywordImage(keyword) {
+  if (imageCache[keyword]) return imageCache[keyword];
+  let record = null;
+  try { record = await fetchPexels(keyword); }
+  catch (e) { console.warn(`  ⚠ Pexels failed for "${keyword}": ${e.message}`); }
+  if (!record) {
+    try { record = await fetchPixabay(keyword); }
+    catch (e) { console.warn(`  ⚠ Pixabay failed for "${keyword}": ${e.message}`); }
+  }
+  if (!record) record = { provider: "picsum", base: null };
+  imageCache[keyword] = record;
+  return record;
+}
+
+/** Build all unique-size links needed for one keyword's pages. */
+function sizedUrl(record, keyword, w, h) {
+  if (record.provider === "pexels") {
+    // Pexels serves images off an imgix-style CDN — arbitrary resize is supported.
+    return `${record.base}?auto=compress&cs=tinysrgb&fit=crop&w=${w}&h=${h}`;
+  }
+  if (record.provider === "pixabay") {
+    // Pixabay only exposes a few fixed sizes on the free tier — use the largest available.
+    return record.base;
+  }
+  return picsumUrl(keyword, w, h);
+}
+
+async function prefetchAllImages() {
+  const uniqueKeywords = [...new Set(CLUSTERS.flatMap(c => c.keywords.map(k => k.kw)))];
+  const usingLiveApis = !!(PEXELS_KEY || PIXABAY_KEY);
+  console.log(`🖼  Resolving ${uniqueKeywords.length} unique wallpaper images ${usingLiveApis ? "(Pexels → Pixabay → Picsum)" : "(no API keys set — using Picsum fallback for all)"}…`);
+  let resolved = 0;
+  for (const kw of uniqueKeywords) {
+    await resolveKeywordImage(kw);
+    resolved++;
+    if (resolved % 20 === 0) console.log(`  ${resolved}/${uniqueKeywords.length}`);
+  }
+  fs.writeFileSync(CACHE_FILE, JSON.stringify(imageCache, null, 2));
+  console.log(`✅ Image resolution complete (cached in .image-cache.json, delete it to re-fetch).\n`);
+}
+
+function imgUrl(keyword, w = 1920, h = 1080) {
+  const record = imageCache[keyword] || { provider: "picsum", base: null };
+  return sizedUrl(record, keyword, w, h);
 }
 function thumbUrl(keyword) { return imgUrl(keyword, 400, 300); }
 function heroUrl(keyword)  { return imgUrl(keyword, 1920, 1080); }
-function ogUrl(keyword)    { return imgUrl(keyword, 1200, 630, "jpeg"); }
+function ogUrl(keyword)    { return imgUrl(keyword, 1200, 630); }
 
 // ─────────────────────────────────────────
 // CLUSTERS
@@ -1022,41 +1113,52 @@ function ensureDir(dir) {
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive:true });
 }
 
-console.log("🚀 Faynx SEO Engine v4 starting…\n");
+async function main() {
+  console.log("🚀 Faynx SEO Engine v4 starting…\n");
 
-ensureDir("wallpaper");
-ensureDir("category");
+  // Resolve every unique keyword to a real (or Picsum-fallback) image
+  // BEFORE any page HTML is generated, since imgUrl() reads from the cache.
+  await prefetchAllImages();
 
-// Wallpaper pages
-console.log(`📄 Generating ${allPages.length} wallpaper pages…`);
-allPages.forEach((item, i) => {
-  fs.writeFileSync(`wallpaper/${item.slug}.html`, generateWallpaperPage(item));
-  if ((i+1) % 100 === 0) process.stdout.write(`  ${i+1}/${allPages.length}\n`);
+  ensureDir("wallpaper");
+  ensureDir("category");
+
+  // Wallpaper pages
+  console.log(`📄 Generating ${allPages.length} wallpaper pages…`);
+  allPages.forEach((item, i) => {
+    fs.writeFileSync(`wallpaper/${item.slug}.html`, generateWallpaperPage(item));
+    if ((i+1) % 100 === 0) process.stdout.write(`  ${i+1}/${allPages.length}\n`);
+  });
+  console.log(`  ✅ ${allPages.length} wallpaper pages written\n`);
+
+  // Category pages
+  console.log("📂 Generating category pages…");
+  CLUSTERS.forEach(cluster => {
+    fs.writeFileSync(`category/${cluster.slug}.html`, generateCategoryPage(cluster));
+    console.log(`  ✅ /category/${cluster.slug}.html`);
+  });
+  console.log();
+
+  // Sitemaps
+  console.log("🗺  Generating sitemaps…");
+  fs.writeFileSync("sitemap.xml",        generateSitemapIndex());
+  fs.writeFileSync("sitemap-main.xml",   generateMainSitemap());
+  fs.writeFileSync("sitemap-images.xml", generateImageSitemap());
+  console.log(`  ✅ sitemap.xml (index) + sitemap-main.xml + sitemap-images.xml\n`);
+
+  // Robots
+  fs.writeFileSync("robots.txt", generateRobots());
+  console.log("  ✅ robots.txt\n");
+
+  console.log("══════════════════════════════════════════");
+  console.log(`✅ ${allPages.length} wallpaper pages`);
+  console.log(`✅ ${CLUSTERS.length} category pages`);
+  console.log("✅ Sitemap index + image sitemap");
+  console.log("✅ robots.txt");
+  console.log("══════════════════════════════════════════");
+}
+
+main().catch(err => {
+  console.error("❌ Build failed:", err);
+  process.exit(1);
 });
-console.log(`  ✅ ${allPages.length} wallpaper pages written\n`);
-
-// Category pages
-console.log("📂 Generating category pages…");
-CLUSTERS.forEach(cluster => {
-  fs.writeFileSync(`category/${cluster.slug}.html`, generateCategoryPage(cluster));
-  console.log(`  ✅ /category/${cluster.slug}.html`);
-});
-console.log();
-
-// Sitemaps
-console.log("🗺  Generating sitemaps…");
-fs.writeFileSync("sitemap.xml",        generateSitemapIndex());
-fs.writeFileSync("sitemap-main.xml",   generateMainSitemap());
-fs.writeFileSync("sitemap-images.xml", generateImageSitemap());
-console.log(`  ✅ sitemap.xml (index) + sitemap-main.xml + sitemap-images.xml\n`);
-
-// Robots
-fs.writeFileSync("robots.txt", generateRobots());
-console.log("  ✅ robots.txt\n");
-
-console.log("══════════════════════════════════════════");
-console.log(`✅ ${allPages.length} wallpaper pages`);
-console.log(`✅ ${CLUSTERS.length} category pages`);
-console.log("✅ Sitemap index + image sitemap");
-console.log("✅ robots.txt");
-console.log("══════════════════════════════════════════");

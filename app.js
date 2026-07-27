@@ -19,15 +19,43 @@ const auth = getAuth(FB);
 const db   = getFirestore(FB);
 const gProvider = new GoogleAuthProvider();
 
-/* ── Unsplash — MOVE TO SERVERLESS PROXY before production ── */
-const KEY  = "FMEeJNsNqxP4c9YlEyKk_HiWhSPR_2OyvSQxc5zj_x4CKMYvPJq5OgeZ4W2-k2fDpwchFyA_cyYhvs2HoDC6UM";
-const BASE = "https://api.unsplash.com";
-const UH   = { Authorization: `Client-ID ${KEY}` };
+/* ══════════════════════════════════════
+   IMAGE PROVIDERS — MOVE ALL KEYS TO A SERVERLESS PROXY BEFORE PRODUCTION
+   Every visitor currently shares these keys directly in the browser,
+   which is what was exhausting the Unsplash free-tier limit (50 req/hr)
+   and causing wallpapers to fail to load. This layer now tries several
+   providers in order and automatically falls back — and skips a
+   provider for a cooldown window the moment it starts rate-limiting —
+   so a single exhausted key no longer breaks the gallery.
 
-/* ── Helper: add WebP + quality to Unsplash Imgix URLs ── */
+   To add real keys for the extra providers (both have generous free
+   tiers), replace the placeholders below:
+     PEXELS_KEY:  https://www.pexels.com/api/      (free, ~200 req/hr)
+     PIXABAY_KEY: https://pixabay.com/api/docs/    (free, ~5000 req/hr)
+   Picsum needs no key and never rate-limits — it's the final fallback.
+══════════════════════════════════════ */
+const KEY         = "FMEevPJq5OgeZ4W2-k2fDpwchFyA_cyYhvs2HoDC6UM"; // Unsplash Client-ID
+const PEXELS_KEY  = "YOUR_PEXELS_API_KEY";   // https://www.pexels.com/api/
+const PIXABAY_KEY = "YOUR_PIXABAY_API_KEY";  // https://pixabay.com/api/docs/
+
+const BASE        = "https://api.unsplash.com";
+const UH          = { Authorization: `Client-ID ${KEY}` };
+const PEXELS_BASE = "https://api.pexels.com/v1";
+const PIXABAY_BASE= "https://pixabay.com/api/";
+
+const TOPIC_QUERY_MAP = {
+  wallpapers:"4k wallpaper", nature:"nature", "architecture-interior":"architecture interior",
+  travel:"travel destination", "street-photography":"city street", experimental:"abstract art",
+  "textures-patterns":"texture pattern", animals:"animals wildlife", "fashion-beauty":"fashion",
+  film:"cinematic film", "food-drink":"food", athletics:"sports"
+};
+
+/* ── Helper: add WebP + quality only to Unsplash/Imgix URLs — other
+   providers already return correctly-sized, ready-to-use URLs. ── */
 function imgUrl(rawUrl, w = null, fmt = "webp") {
   try {
     const u = new URL(rawUrl);
+    if (!u.hostname.includes("unsplash.com")) return rawUrl;
     u.searchParams.set("fm",  fmt);
     u.searchParams.set("q",   "80");
     if (w) u.searchParams.set("w", String(w));
@@ -35,70 +63,169 @@ function imgUrl(rawUrl, w = null, fmt = "webp") {
   } catch { return rawUrl; }
 }
 
+/* ── Per-provider rate-limit cooldown so a 403/429 stops being retried for a while ── */
+const _cooldown = {};
+const isCoolingDown = name => _cooldown[name] && Date.now() < _cooldown[name];
+const coolDown = (name, ms = 10*60*1000) => { _cooldown[name] = Date.now() + ms; };
+
+/* ── Short-lived response cache (per browser tab) to cut down on repeat requests ── */
+const CACHE_TTL = 6*60*1000;
+function cacheGet(key) {
+  try {
+    const raw = sessionStorage.getItem("fx_c_"+key); if (!raw) return null;
+    const { t, data } = JSON.parse(raw);
+    if (Date.now()-t > CACHE_TTL) return null;
+    return data;
+  } catch { return null; }
+}
+function cacheSet(key, data) {
+  try { sessionStorage.setItem("fx_c_"+key, JSON.stringify({ t: Date.now(), data })); } catch {}
+}
+
+/* ── Unsplash (primary) ── */
+async function unsplashTopicPhotos(slug, p) {
+  const r = await fetch(`${BASE}/topics/${slug}/photos?page=${p}&per_page=20&order_by=popular`, { headers: UH, cache: "no-store" });
+  if (!r.ok) throw new Error(`unsplash ${r.status}`);
+  return r.json();
+}
+async function unsplashSearch(q, p) {
+  const r = await fetch(`${BASE}/search/photos?query=${encodeURIComponent(q)}&page=${p}&per_page=20`, { headers: UH, cache: "no-store" });
+  if (!r.ok) throw new Error(`unsplash ${r.status}`);
+  return (await r.json()).results;
+}
+async function unsplashRandom(n) {
+  const r = await fetch(`${BASE}/photos/random?count=${n}&topics=wallpapers`, { headers: UH, cache: "no-store" });
+  if (!r.ok) throw new Error(`unsplash ${r.status}`);
+  return r.json();
+}
+
+/* ── Pexels ── */
+function normalizePexels(p) {
+  return {
+    id: `px_${p.id}`, width: p.width, height: p.height, color: p.avg_color || "#1a1a26",
+    likes: 0, alt_description: p.alt || "HD wallpaper",
+    urls: { small: p.src.medium, regular: p.src.large, full: p.src.large2x || p.src.original, raw: p.src.original },
+    user: { name: p.photographer || "Pexels" },
+    links: { html: p.url, download_location: p.src.original },
+    source: "pexels"
+  };
+}
+async function pexelsSearch(q, p) {
+  if (!PEXELS_KEY || PEXELS_KEY.startsWith("YOUR_")) throw new Error("pexels no-key");
+  const r = await fetch(`${PEXELS_BASE}/search?query=${encodeURIComponent(q)}&page=${p}&per_page=20&orientation=landscape`, { headers: { Authorization: PEXELS_KEY } });
+  if (!r.ok) throw new Error(`pexels ${r.status}`);
+  return ((await r.json()).photos || []).map(normalizePexels);
+}
+async function pexelsCurated(p) {
+  if (!PEXELS_KEY || PEXELS_KEY.startsWith("YOUR_")) throw new Error("pexels no-key");
+  const r = await fetch(`${PEXELS_BASE}/curated?page=${p}&per_page=20`, { headers: { Authorization: PEXELS_KEY } });
+  if (!r.ok) throw new Error(`pexels ${r.status}`);
+  return ((await r.json()).photos || []).map(normalizePexels);
+}
+
+/* ── Pixabay ── */
+function normalizePixabay(h) {
+  return {
+    id: `pb_${h.id}`, width: h.imageWidth, height: h.imageHeight, color: "#1a1a26",
+    likes: h.likes || 0, alt_description: h.tags || "HD wallpaper",
+    urls: { small: h.webformatURL, regular: h.largeImageURL, full: h.largeImageURL, raw: h.largeImageURL },
+    user: { name: h.user || "Pixabay" },
+    links: { html: h.pageURL, download_location: h.largeImageURL },
+    source: "pixabay"
+  };
+}
+async function pixabaySearch(q, p) {
+  if (!PIXABAY_KEY || PIXABAY_KEY.startsWith("YOUR_")) throw new Error("pixabay no-key");
+  const r = await fetch(`${PIXABAY_BASE}?key=${PIXABAY_KEY}&q=${encodeURIComponent(q)}&image_type=photo&per_page=20&page=${p}&safesearch=true`);
+  if (!r.ok) throw new Error(`pixabay ${r.status}`);
+  return ((await r.json()).hits || []).map(normalizePixabay);
+}
+async function pixabayPopular(p) {
+  if (!PIXABAY_KEY || PIXABAY_KEY.startsWith("YOUR_")) throw new Error("pixabay no-key");
+  const r = await fetch(`${PIXABAY_BASE}?key=${PIXABAY_KEY}&order=popular&image_type=photo&per_page=20&page=${p}&safesearch=true`);
+  if (!r.ok) throw new Error(`pixabay ${r.status}`);
+  return ((await r.json()).hits || []).map(normalizePixabay);
+}
+
+/* ── Picsum (keyless, unlimited, ultimate fallback) ── */
+function picsumBatch(n, seedBase) {
+  const out = [];
+  for (let i = 0; i < n; i++) {
+    const seed = `${seedBase}-${i}-${Math.floor(Math.random()*1e6)}`;
+    out.push({
+      id: `pc_${seed}`, width: 1280, height: 800, color: "#1a1a26", likes: 0,
+      alt_description: "HD wallpaper",
+      urls: {
+        small: `https://picsum.photos/seed/${seed}/480/300`,
+        regular: `https://picsum.photos/seed/${seed}/1280/800`,
+        full: `https://picsum.photos/seed/${seed}/1920/1200`,
+        raw: `https://picsum.photos/seed/${seed}/1920/1200`
+      },
+      user: { name: "Picsum" },
+      links: { html: `https://picsum.photos/seed/${seed}/1920/1200`, download_location: `https://picsum.photos/seed/${seed}/1920/1200` },
+      source: "picsum"
+    });
+  }
+  return out;
+}
+
+/* ── Try providers in order, cache the winning result, cool down failing ones ── */
+async function withFallback(cacheKey, providers) {
+  const cached = cacheGet(cacheKey);
+  if (cached) return cached;
+  let lastErr;
+  for (const { name, fn } of providers) {
+    if (isCoolingDown(name)) continue;
+    try {
+      const result = await fn();
+      if (result && result.length) { cacheSet(cacheKey, result); return result; }
+    } catch (e) {
+      lastErr = e;
+      if (/40[13]|429/.test(String(e.message))) coolDown(name);
+      console.warn(`[Faynx] ${name} unavailable:`, e.message);
+    }
+  }
+  if (lastErr) throw lastErr;
+  return [];
+}
+
 const API = {
   async topics() {
-    const r = await fetch(
-      `${BASE}/topics?per_page=20&order_by=featured`,
-      {
-        headers: UH,
-        cache: "no-store"
-      }
-    );
-
+    const r = await fetch(`${BASE}/topics?per_page=20&order_by=featured`, { headers: UH, cache: "no-store" });
     if (!r.ok) throw new Error("topics");
-
     return r.json();
   },
 
-  async topicPhotos(s, p = 1) {
-    const r = await fetch(
-      `${BASE}/topics/${s}/photos?page=${p}&per_page=20&order_by=popular`,
-      {
-        headers: UH,
-        cache: "no-store"
-      }
-    );
-
-    if (!r.ok) throw new Error("tp");
-
-    return r.json();
+  async topicPhotos(slug, p = 1) {
+    const q = TOPIC_QUERY_MAP[slug] || slug.replace(/-/g, " ");
+    return withFallback(`topic:${slug}:${p}`, [
+      { name: "unsplash", fn: () => unsplashTopicPhotos(slug, p) },
+      { name: "pexels",   fn: () => pexelsSearch(q, p) },
+      { name: "pixabay",  fn: () => pixabaySearch(q, p) },
+      { name: "picsum",   fn: () => Promise.resolve(picsumBatch(20, slug+p)) }
+    ]);
   },
 
   async search(q, p = 1) {
-    const r = await fetch(
-      `${BASE}/search/photos?query=${encodeURIComponent(q)}&page=${p}&per_page=20`,
-      {
-        headers: UH,
-        cache: "no-store"
-      }
-    );
-
-    if (!r.ok) throw new Error("search");
-
-    return (await r.json()).results;
+    return withFallback(`search:${q}:${p}`, [
+      { name: "unsplash", fn: () => unsplashSearch(q, p) },
+      { name: "pexels",   fn: () => pexelsSearch(q, p) },
+      { name: "pixabay",  fn: () => pixabaySearch(q, p) }
+    ]);
   },
 
   async random(n = 6) {
-    const r = await fetch(
-      `${BASE}/photos/random?count=${n}&topics=wallpapers`,
-      {
-        headers: UH,
-        cache: "no-store"
-      }
-    );
-
-    if (!r.ok) throw new Error("random");
-
-    return r.json();
+    return withFallback(`random:${n}`, [
+      { name: "unsplash", fn: () => unsplashRandom(n) },
+      { name: "pexels",   fn: () => pexelsCurated(1).then(r => r.slice(0, n)) },
+      { name: "pixabay",  fn: () => pixabayPopular(1).then(r => r.slice(0, n)) },
+      { name: "picsum",   fn: () => Promise.resolve(picsumBatch(n, "random")) }
+    ]);
   },
 
   trackDownload(photo) {
-    try {
-      fetch(photo.links.download_location, {
-        headers: UH,
-        cache: "no-store"
-      });
-    } catch (_) {}
+    if (photo.source && photo.source !== "unsplash") return; // only Unsplash requires a download ping per its API terms
+    try { fetch(photo.links.download_location, { headers: UH, cache: "no-store" }); } catch (_) {}
   }
 };
 
@@ -480,6 +607,31 @@ window._triggerSearch = trigSearch;
 const gallery = get("gallery");
 window.loadPhotos = loadPhotos;
 
+/* ── Skeleton loaders + empty/error state (uses existing .pin-skel / .err-state CSS) ── */
+function showSkels(n = 12) {
+  if (!gallery) return;
+  for (let i = 0; i < n; i++) {
+    const s = document.createElement("div");
+    s.className = "pin-skel";
+    s.style.height = `${220 + Math.floor(Math.random()*180)}px`;
+    gallery.appendChild(s);
+  }
+}
+function removeSkels() {
+  gallery?.querySelectorAll(".pin-skel").forEach(el => el.remove());
+}
+function showErr(msg) {
+  if (!gallery) return;
+  gallery.querySelectorAll(".pin-skel, .err-state").forEach(el => el.remove());
+  const el = document.createElement("div");
+  el.className = "err-state";
+  el.innerHTML = `
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="32" height="32"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    <span>${msg}</span>
+  `;
+  gallery.appendChild(el);
+}
+
 async function loadPhotos(reset = false) {
   if (!gallery) return;
   if (loading && !reset) return;
@@ -576,7 +728,16 @@ function renderPin(photo, idx=0, container=gallery) {
   img.style.cssText = "opacity:0;transition:opacity .38s ease;";
   img.style.aspectRatio = `${photo.width}/${photo.height}`;
   img.onload  = () => img.style.opacity = "1";
-  img.onerror = () => img.style.opacity = "1";
+  img.dataset.retried = "0";
+  img.onerror = () => {
+    if (img.dataset.retried === "0" && photo.urls?.regular && img.src !== photo.urls.regular) {
+      img.dataset.retried = "1";
+      img.src = photo.urls.regular;
+      return;
+    }
+    /* Give up cleanly: hide the broken-image icon, let the card's dominant-color background show through */
+    img.style.visibility = "hidden";
+  };
 
   const ov  = document.createElement("div"); ov.className = "pin-overlay";
   const top = document.createElement("div"); top.className = "pin-top";
@@ -670,7 +831,8 @@ async function quickDownload(photo) {
     /* Use best available quality with WebP */
     const url = imgUrl(photo.urls[selectedQuality] || photo.urls.regular, null, "webp");
     const res = await fetch(url); const blob = await res.blob();
-    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `faynx-${photo.id}.webp`; a.click();
+    const ext = (blob.type && blob.type.split("/")[1]?.split("+")[0]) || (photo.source === "unsplash" || !photo.source ? "webp" : "jpg");
+    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `faynx-${photo.id}.${ext}`; a.click();
     toast("Download started!","success"); recordDownload(photo);
   } catch(_) { toast("Download failed","error"); }
 }
@@ -1159,6 +1321,41 @@ styleEl.textContent = sheetCSS;
 document.head.appendChild(styleEl);
 
 /* ══════════════════════════════════════
+   APP INIT
+   (previously missing — hero, topics bar, and the
+   initial gallery load were never triggered on page load)
+══════════════════════════════════════ */
+function initApp() {
+  initHero();
+  initHeroBg();
+  buildTopics();
+  loadPhotos(true);
+}
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initApp);
+} else {
+  initApp();
+}
+
+/* Infinite scroll for the main gallery */
+const galleryObserverTarget = get("galleryEnd") || get("gallerySpinner");
+if ("IntersectionObserver" in window && gallery) {
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(entry => { if (entry.isIntersecting && !loading && !noMore) loadPhotos(false); });
+  }, { rootMargin: "600px 0px" });
+  if (galleryObserverTarget) io.observe(galleryObserverTarget);
+  else window.addEventListener("scroll", () => {
+    if (loading || noMore) return;
+    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 800) loadPhotos(false);
+  }, { passive: true });
+}
+
+/* ══════════════════════════════════════
    SERVICE WORKER
 ══════════════════════════════════════ */
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/service-worker.js").catch(e => console.warn("SW registration failed:", e));
+  });
+}
 
