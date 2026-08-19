@@ -18,6 +18,8 @@ const FB  = initializeApp({ apiKey:"AIzaSyDWcWf_vcl_OLRM1Lj-Heh20k2zJqmGLok", au
 const auth = getAuth(FB);
 const db   = getFirestore(FB);
 const gProvider = new GoogleAuthProvider();
+const ADMIN_EMAILS = new Set(["khanfarhan7788khan@gmail.com"]);
+const isAdminUser = user => ADMIN_EMAILS.has((user?.email || "").toLowerCase());
 
 /* ══════════════════════════════════════
    IMAGE PROVIDERS — MOVE ALL KEYS TO A SERVERLESS PROXY BEFORE PRODUCTION
@@ -1107,8 +1109,34 @@ get("clearHistoryBtn")?.addEventListener("click", async () => {
 /* ══════════════════════════════════════
    PROFILE
 ══════════════════════════════════════ */
-function openProfile() { if (!auth.currentUser) { openAuth("signin"); return; } refreshProfileUI(); showSection("profile"); setBnav("profile"); }
+function openProfile() {
+  if (!auth.currentUser) { openAuth("signin"); return; }
+  if (!isAdminUser(auth.currentUser)) { toast("Admin access only","warn"); return; }
+  refreshProfileUI(); showSection("profile"); setBnav("profile");
+}
 get("profileClose")?.addEventListener("click", () => { showSection("main"); setBnav("home"); });
+get("dashboardSavedBtn")?.addEventListener("click", openSaved);
+get("dashboardCollectionsBtn")?.addEventListener("click", openCollections);
+get("dashboardDownloadsBtn")?.addEventListener("click", openDownloads);
+get("dashboardSavedCard")?.addEventListener("click", openSaved);
+get("dashboardCollectionsCard")?.addEventListener("click", openCollections);
+get("dashboardDownloadsCard")?.addEventListener("click", openDownloads);
+get("dashboardBrowseBtn")?.addEventListener("click", () => { showSection("main"); setBnav("home"); });
+get("activityViewAll")?.addEventListener("click", openDownloads);
+
+function renderDashboardActivity() {
+  const wrap = get("dashboardActivity"), empty = get("dashboardActivityEmpty");
+  if (!wrap || !empty) return;
+  wrap.innerHTML = "";
+  const latest = userData.downloads.slice(0, 4);
+  empty.style.display = latest.length ? "none" : "";
+  latest.forEach(dl => {
+    const item = document.createElement("button"); item.type = "button"; item.className = "activity-item";
+    const img = document.createElement("img"); img.src = dl.thumb || ""; img.alt = `${dl.width || ""}x${dl.height || ""} wallpaper`; img.loading = "lazy";
+    const label = document.createElement("small"); label.textContent = `${dl.width || "HD"} x ${dl.height || "wallpaper"}`;
+    item.append(img, label); item.addEventListener("click", openDownloads); wrap.appendChild(item);
+  });
+}
 
 function refreshProfileUI() {
   const user = auth.currentUser; if (!user) return;
@@ -1120,12 +1148,14 @@ function refreshProfileUI() {
   const mn=get("menuDisplayName"); if(mn) mn.textContent=user.displayName||"User";
   const me=get("menuEmail"); if(me) me.textContent=user.email||"";
   const pdn=get("profileDisplayName"); if(pdn) pdn.textContent=user.displayName||"User";
+  const dn=get("dashboardName"); if(dn) dn.textContent=(user.displayName||"User").split(" ")[0];
   const pet=get("profileEmailText"); if(pet) pet.textContent=user.email||"";
   const ni=get("nameInput"); if(ni) ni.value=user.displayName||"";
   const tier=get("profileTier"); if(tier){ tier.textContent=userData.premium?"⭐ Premium":"Free"; tier.className="tier-badge "+(userData.premium?"tier-premium":"tier-free"); }
   const ub=get("upgradeBtn"); if(ub) ub.style.display=userData.premium?"none":"";
   if(get("menuUserInfo")) get("menuUserInfo").style.display="flex";
-  [get("menuSep1"),get("menuProfile"),get("menuSignOut"),get("menuSep2")].forEach(el=>{ if(el) el.style.display=""; });
+  [get("menuSep1"),get("menuSignOut"),get("menuSep2")].forEach(el=>{ if(el) el.style.display=""; });
+  if(get("menuProfile")) get("menuProfile").style.display=isAdminUser(user)?"":"none";
   if(get("menuSignIn")) get("menuSignIn").style.display="none";
   refreshStats();
 }
@@ -1134,6 +1164,11 @@ function refreshStats() {
   if(s) s.textContent=userData.favorites.length;
   if(d) d.textContent=userData.downloads.length;
   if(c) c.textContent=Object.keys(userData.collections).length;
+  const savedCount=get("dashboardSavedCount"), downloadsCount=get("dashboardDownloadsCount"), collectionsCount=get("dashboardCollectionsCount");
+  if(savedCount) savedCount.textContent=`${userData.favorites.length} saved`;
+  if(downloadsCount) downloadsCount.textContent=`${userData.downloads.length} downloads`;
+  if(collectionsCount) collectionsCount.textContent=`${Object.keys(userData.collections).length} collections`;
+  renderDashboardActivity();
 }
 get("saveNameBtn")?.addEventListener("click", async () => {
   const user=auth.currentUser; if(!user) return;
@@ -1254,8 +1289,10 @@ async function doSignOut() {
 }
 onAuthStateChanged(auth, async user=>{
   const li=!!user;
+  const admin = isAdminUser(user);
   if(get("menuSignIn")) get("menuSignIn").style.display=li?"none":"";
-  if(get("menuProfile")) get("menuProfile").style.display=li?"":"none";
+  if(get("menuProfile")) get("menuProfile").style.display=admin?"":"none";
+  if(get("bProfile")) get("bProfile").style.display=admin?"":"none";
   if(get("menuSignOut")) get("menuSignOut").style.display=li?"":"none";
   if(get("menuSep2")) get("menuSep2").style.display=li?"":"none";
   if(li){
