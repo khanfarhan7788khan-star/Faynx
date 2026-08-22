@@ -212,7 +212,8 @@ const API = {
     return withFallback(`search:${q}:${p}`, [
       { name: "unsplash", fn: () => unsplashSearch(q, p) },
       { name: "pexels",   fn: () => pexelsSearch(q, p) },
-      { name: "pixabay",  fn: () => pixabaySearch(q, p) }
+      { name: "pixabay",  fn: () => pixabaySearch(q, p) },
+      { name: "picsum",   fn: () => Promise.resolve(picsumBatch(20, `${q}-${p}`)) }
     ]);
   },
 
