@@ -867,9 +867,12 @@ ${footerHTML()}
 // ═══════════════════════════════════════════════════════════════
 // 2. CATEGORY PAGE
 // ═══════════════════════════════════════════════════════════════
-function generateCategoryPage(cluster) {
+function generateCategoryPage(cluster, pageNum = 1) {
   const pages    = allPages.filter(p => p.cluster === cluster.slug);
-  const firstPage = pages.slice(0, 48);
+  const totalPages = Math.ceil(pages.length / 48);
+  const start = (pageNum - 1) * 48;
+  const end = start + 48;
+  const pageItems = pages.slice(start, end);
 
   const schema = {
     "@context": "https://schema.org",
@@ -877,7 +880,7 @@ function generateCategoryPage(cluster) {
       {
         "@type": "CollectionPage",
         "name": `${cluster.label} Wallpapers — Free HD & 4K | Faynx`,
-        "url": `${BASE_URL}/category/${cluster.slug}.html`,
+        "url": `${BASE_URL}/category/${cluster.slug}${pageNum > 1 ? `-page-${pageNum}` : ""}.html`,
         "description": cluster.description,
         "dateModified": TODAY,
         "isPartOf": { "@type":"WebSite","url":BASE_URL,"name":SITE_NAME }
@@ -893,7 +896,7 @@ function generateCategoryPage(cluster) {
         "@type": "ItemList",
         "name": `${cluster.label} Wallpapers`,
         "numberOfItems": pages.length,
-        "itemListElement": firstPage.slice(0,10).map((p,i) => ({
+        "itemListElement": pageItems.slice(0,10).map((p,i) => ({
           "@type":"ListItem","position":i+1,
           "url":`${BASE_URL}/wallpaper/${p.slug}.html`,
           "name":`${p.keyword} wallpaper ${p.variant}`
@@ -902,7 +905,7 @@ function generateCategoryPage(cluster) {
     ]
   };
 
-  const gridCards = firstPage.map(p => `
+  const gridCards = pageItems.map(p => `
     <a href="/wallpaper/${p.slug}.html" class="wall-card" style="aspect-ratio:4/3" aria-label="${p.keyword} ${p.variant} wallpaper">
       <img src="${thumbUrl(p.keyword)}"
         alt="${p.keyword} ${p.variant} wallpaper — free HD download"
@@ -916,8 +919,6 @@ function generateCategoryPage(cluster) {
   const crossLinks = CLUSTERS.filter(c => c.slug !== cluster.slug).map(c =>
     `<a href="/category/${c.slug}.html" class="tag tag-link">${c.icon} ${c.label}</a>`
   ).join("");
-
-  const totalPages = Math.ceil(pages.length / 48);
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -1001,16 +1002,15 @@ ${headerHTML()}
 
 <div class="gallery-wrap">
   <div class="gallery-meta">
-    <span>Showing <strong style="color:var(--snow)">${firstPage.length}</strong> of <strong style="color:var(--snow)">${pages.length}</strong> ${cluster.label.toLowerCase()} wallpapers</span>
+    <span>Showing <strong style="color:var(--snow)">${pageItems.length}</strong> of <strong style="color:var(--snow)">${pages.length}</strong> ${cluster.label.toLowerCase()} wallpapers (Page ${pageNum}/${totalPages})</span>
   </div>
   <div class="wall-grid">${gridCards}</div>
 
   <nav class="pagination" aria-label="Page navigation">
-    <span class="page-btn active">1</span>
-    ${Array.from({length:Math.min(totalPages-1,5)},(_,i) =>
-      `<a href="/category/${cluster.slug}-page-${i+2}.html" class="page-btn">${i+2}</a>`
-    ).join("")}
-    ${totalPages>6?`<span class="page-btn" style="pointer-events:none">…</span><a href="/category/${cluster.slug}-page-${totalPages}.html" class="page-btn">${totalPages}</a>`:""}
+    ${pageNum > 1 ? `<a href="/category/${cluster.slug}${pageNum === 2 ? "" : `-page-${pageNum-1}`}.html" class="page-btn">← Prev</a>` : ""}
+    <span class="page-btn active">${pageNum}</span>
+    ${pageNum < totalPages ? `<a href="/category/${cluster.slug}-page-${pageNum+1}.html" class="page-btn">Next →</a>` : ""}
+    ${totalPages > 1 ? `<span class="page-btn" style="pointer-events:none;opacity:.5">of ${totalPages}</span>` : ""}
   </nav>
 </div>
 
@@ -1134,8 +1134,13 @@ async function main() {
   // Category pages
   console.log("📂 Generating category pages…");
   CLUSTERS.forEach(cluster => {
-    fs.writeFileSync(`category/${cluster.slug}.html`, generateCategoryPage(cluster));
-    console.log(`  ✅ /category/${cluster.slug}.html`);
+    const pages = allPages.filter(p => p.cluster === cluster.slug);
+    const totalPages = Math.ceil(pages.length / 48);
+    for (let p = 1; p <= totalPages; p++) {
+      const filename = p === 1 ? `category/${cluster.slug}.html` : `category/${cluster.slug}-page-${p}.html`;
+      fs.writeFileSync(filename, generateCategoryPage(cluster, p));
+    }
+    console.log(`  ✅ /category/${cluster.slug}.html (${totalPages} page${totalPages > 1 ? "s" : ""})`);
   });
   console.log();
 
